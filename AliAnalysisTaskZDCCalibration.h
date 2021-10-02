@@ -48,6 +48,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TList*                  fOutputList;    //! output list
         TH1D*                   fHistCent;
         TH2D*                   fHist2DCentCorr[2];
+        TH2D*                   fHist2DVxVyTot;
+        TH1D*                   fHistVzTot;
 
         TProfile*               fProfileQxAQxCCentTot[2];
         TProfile*               fProfileQxAQyCCentTot[2];
