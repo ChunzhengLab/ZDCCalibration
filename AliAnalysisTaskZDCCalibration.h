@@ -76,19 +76,19 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //For RC
         //vxsigma vysigma vz
         //Write
-        THnSparse*              fHn4DQxZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*              fHn4DQyZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*              fHn4DMtZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*              fHn4DQxZNCCentVxVySigmaVz[fnRunMax];
-        THnSparse*              fHn4DQyZNCCentVxVySigmaVz[fnRunMax];
-        THnSparse*              fHn4DMtZNCCentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQxZNACentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQyZNACentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DMtZNACentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQxZNCCentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQyZNCCentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DMtZNCCentVxVySigmaVz[fnRunMax];
         //Read
-        THnSparse*              fHn4DForZNAQxRC;
-        THnSparse*              fHn4DForZNAQyRC;
-        THnSparse*              fHn4DForZNAMtRC;
-        THnSparse*              fHn4DForZNCQxRC;
-        THnSparse*              fHn4DForZNCQyRC;
-        THnSparse*              fHn4DForZNCMtRC;
+        THnSparseD*              fHn4DForZNAQxRC;
+        THnSparseD*              fHn4DForZNAQyRC;
+        THnSparseD*              fHn4DForZNAMtRC;
+        THnSparseD*              fHn4DForZNCQxRC;
+        THnSparseD*              fHn4DForZNCQyRC;
+        THnSparseD*              fHn4DForZNCMtRC;
 
         //Corr
         TProfile*               fProfileQxAQxCCent[fnRunMax][2];
@@ -96,8 +96,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile*               fProfileQyAQxCCent[fnRunMax][2];
         TProfile*               fProfileQyAQyCCent[fnRunMax][2];
         //Psi
-        TH2D*                   fHist2DPsiACentBin[fnRunMax][2];
-        TH2D*                   fHist2DPsiCCentBin[fnRunMax][2];
+        TH2D*                   fHist2DPsiACent[fnRunMax][2];
+        TH2D*                   fHist2DPsiCCent[fnRunMax][2];
 
         int                     GetCentBin(double centrality);
         int                     GetRunNumBin(int runNum);

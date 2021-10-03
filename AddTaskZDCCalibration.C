@@ -1,4 +1,5 @@
-#include "AliAnalysisTaskZDCCalibration.h"
+// #include "AliAnalysisTaskZDCCalibration.h"
+// #include "AliAnalysisManager.h"
 AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
 {
     // get the manager via the static access member. since it's static, you don't need
@@ -15,7 +16,7 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     }
     // by default, a file is open for writing. here, we get the filename
     TString fileName = AliAnalysisManager::GetCommonFileName();
-    fileName += ":MyTask";      // create a subfolder in the file
+    fileName += ":myTask";      // create a subfolder in the file
     // now we create an instance of your task
     AliAnalysisTaskZDCCalibration* task = new AliAnalysisTaskZDCCalibration(name.Data());   
     if(!task) return 0x0;
@@ -24,19 +25,23 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     mgr->AddTask(task);
 
     // add list for ZDC Calibration
-    TString ZDCCalibrationFileName = "alien:///alice/cern.ch/user/j/jmargutt/15oHI_EZDCcalib.root";
+    TString ZDCCalibrationFileName = "ZDCCalibration.root";
     TFile* ZDCCalibrationFile = TFile::Open(ZDCCalibrationFileName,"READ");
     if(!ZDCCalibrationFile) {
         cout << "ERROR: ZDC Calibration File is not found!" << endl;
         exit(1);
     }
     gROOT->cd();
-    TList* ZDCCalibrationList = (TList*)(ZDCCalibrationFile->FindObjectAny("output"));
+
+    TDirectory* inputDir = ZDCCalibrationFile->GetDirectory("myTask");
+    TList* ZDCCalibrationList = nullptr;
+
+    inputDir->GetObject("Output",ZDCCalibrationList);
     if(ZDCCalibrationList) {
         task->SetZDCCalibrationList(ZDCCalibrationList);
         cout << "ZDC Calibration file: set! (from " <<  ZDCCalibrationFileName.Data() << ")" << endl;
     } else {
-        cout << "ERROR: ZDC Calibration file: EZNcalib TList not found!" << endl;
+        cout << "ERROR: ZDC Calibration file: TList not found!" << endl;
         exit(1);
     }
     delete ZDCCalibrationFile;
