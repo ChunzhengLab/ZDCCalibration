@@ -24,8 +24,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         virtual void            ApplyGainEqualization(bool applyGE) {bApplyGE = applyGE;}
         virtual void            ApplyQVZDCRecentering(bool applyRC) {bApplyRC = applyRC;}
 
-        virtual void            SetGainEqualizationList(TList* const wlist) {this->fZDCGEList = wlist;}
-        virtual void            SetQVZDCRecenteringList(TList* const wlist) {this->fZDCRCList = wlist;}
+        virtual void            SetZDCCalibrationList(TList* const wlist)   {this->fZDCCalibrationList = wlist;}
 
     private:
         bool                    bFillHistForGE;
@@ -34,13 +33,11 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         bool                    bGetVetexBin;
         bool                    bApplyGE;
         bool                    bApplyRC;
-        TList*                  fZDCGEList;
-        TList*                  fZDCRCList;
-        TList*                  fVetexList;
+
+        TList*                  fZDCCalibrationList;
 
         double                  fVtx[3];
         double                  fCentrality;
-        double                  fCentBin;
         
         AliAODEvent*            fAOD;           //! input event
         AliAODZDC*              fZDC;
@@ -56,7 +53,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile*               fProfileQyAQxCCentTot[2];
         TProfile*               fProfileQyAQyCCentTot[2];
 
-        const static int fnRunMax = 91;
+        const static int        fnRunMax = 91;
         TList*                  fRunList[fnRunMax];
 
         //Get Vtx
@@ -79,19 +76,19 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //For RC
         //vxsigma vysigma vz
         //Write
-        THnSparse*                    fHn4DQxZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*                    fHn4DQyZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*                    fHn4DMtZNACentVxVySigmaVz[fnRunMax];
-        THnSparse*                    fHn4DQxZNCCentVxVySigmaVz[fnRunMax];
-        THnSparse*                    fHn4DQyZNCCentVxVySigmaVz[fnRunMax];
-        THnSparse*                    fHn4DMtZNCCentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DQxZNACentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DQyZNACentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DMtZNACentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DQxZNCCentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DQyZNCCentVxVySigmaVz[fnRunMax];
+        THnSparse*              fHn4DMtZNCCentVxVySigmaVz[fnRunMax];
         //Read
-        THnSparse*                    fHn4DForZNAQxRC;
-        THnSparse*                    fHn4DForZNAQyRC;
-        THnSparse*                    fHn4DForZNAMtRC;
-        THnSparse*                    fHn4DForZNCQxRC;
-        THnSparse*                    fHn4DForZNCQyRC;
-        THnSparse*                    fHn4DForZNCMtRC;
+        THnSparse*              fHn4DForZNAQxRC;
+        THnSparse*              fHn4DForZNAQyRC;
+        THnSparse*              fHn4DForZNAMtRC;
+        THnSparse*              fHn4DForZNCQxRC;
+        THnSparse*              fHn4DForZNCQyRC;
+        THnSparse*              fHn4DForZNCMtRC;
 
         //Corr
         TProfile*               fProfileQxAQxCCent[fnRunMax][2];

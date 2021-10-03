@@ -30,8 +30,8 @@
 #include "AliAnalysisManager.h"
 #include "AliAODEvent.h"
 #include "AliAODInputHandler.h"
-#include "AliAnalysisTaskZDCCalibration.h"
 #include "AliAnalysisUtils.h"
+#include "AliAnalysisTaskZDCCalibration.h"
 
 class AliAnalysisTaskZDCCalibration;    // your analysis class
 
@@ -40,86 +40,144 @@ using namespace std;            // std namespace: so you can do things like 'cou
 ClassImp(AliAnalysisTaskZDCCalibration) // classimp: necessary for root
 
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTaskSE(), 
-    fAOD(0),fZDC(0),fUtils(0),fHistCent(0),fOutputList(0)
+    bFillHistForGE(kFALSE),
+    bFillHistForRC(kFALSE),
+    bGetVetexBin(kFALSE),
+    bApplyGE(kFALSE),
+    bApplyRC(kFALSE),
+
+    fZDCCalibrationList(nullptr),
+
+    fCentrality(-999),
+    fAOD(nullptr),
+    fZDC(nullptr),
+    fUtils(nullptr),
+    fOutputList(nullptr),
+    fHistCent(nullptr),
+    fHist2DVxVyTot(nullptr),
+    fHistVzTot(nullptr),
+    
+    fHist2DForMeanVxVy(nullptr),
+    fHistForMeanVz(nullptr),
+
+    fProfileForZNCGE(nullptr),
+    fProfileForZNAGE(nullptr),
+
+    fHn4DForZNAQxRC(nullptr),
+    fHn4DForZNAQyRC(nullptr),
+    fHn4DForZNAMtRC(nullptr),
+    fHn4DForZNCQxRC(nullptr),
+    fHn4DForZNCQyRC(nullptr),
+    fHn4DForZNCMtRC(nullptr)
 {
-    // default constructor, don't allocate memory here!
-    // this is used by root for IO purposes, it needs to remain empty
+    for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
+    for (size_t i = 0; i < 3; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
     {
-      fProfileQxAQxCCentTot[i] = NULL;
-      fProfileQxAQyCCentTot[i] = NULL;
-      fProfileQyAQxCCentTot[i] = NULL;
-      fProfileQyAQyCCentTot[i] = NULL;
+      fProfileQxAQxCCentTot[i] = nullptr;
+      fProfileQxAQyCCentTot[i] = nullptr;
+      fProfileQyAQxCCentTot[i] = nullptr;
+      fProfileQyAQyCCentTot[i] = nullptr;
     }
 
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
-      fRunList[iRun]                  = NULL;
-      fHist2DVxVy[iRun]               = NULL;
-      fHistVz[iRun]                   = NULL;
-      fProfileZNATowerEnergy[iRun]    = NULL;
-      fProfileZNCTowerEnergy[iRun]    = NULL;
+      fRunList[iRun]                  = nullptr;
+      fHist2DVxVy[iRun]               = nullptr;
+      fHistVz[iRun]                   = nullptr;
+      fProfileZNATowerEnergy[iRun]    = nullptr;
+      fProfileZNCTowerEnergy[iRun]    = nullptr;
 
       //vx vy sigma vz
-      fHn4DQxZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DQyZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DMtZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DQxZNCCentVxVySigmaVz[iRun] = NULL;
-      fHn4DQyZNCCentVxVySigmaVz[iRun] = NULL;
-      fHn4DMtZNCCentVxVySigmaVz[iRun] = NULL;
+      fHn4DQxZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQyZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DMtZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQxZNCCentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQyZNCCentVxVySigmaVz[iRun] = nullptr;
+      fHn4DMtZNCCentVxVySigmaVz[iRun] = nullptr;
         
       for (size_t i = 0; i < 2; i++)
       {
-        fProfileQxAQxCCent[iRun][i] = NULL;
-        fProfileQxAQyCCent[iRun][i] = NULL;
-        fProfileQyAQxCCent[iRun][i] = NULL;
-        fProfileQyAQyCCent[iRun][i] = NULL;
+        fProfileQxAQxCCent[iRun][i] = nullptr;
+        fProfileQxAQyCCent[iRun][i] = nullptr;
+        fProfileQyAQxCCent[iRun][i] = nullptr;
+        fProfileQyAQyCCent[iRun][i] = nullptr;
 
-        fHist2DPsiACentBin[iRun][i] = NULL;
-        fHist2DPsiCCentBin[iRun][i] = NULL;
+        fHist2DPsiACentBin[iRun][i] = nullptr;
+        fHist2DPsiCCentBin[iRun][i] = nullptr;
       }
     }
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
-    fAOD(0),fZDC(0),fUtils(0),fHistCent(0),fOutputList(0)
+    bFillHistForGE(kFALSE),
+    bFillHistForRC(kFALSE),
+    bGetVetexBin(kFALSE),
+    bApplyGE(kFALSE),
+    bApplyRC(kFALSE),
+
+    fZDCCalibrationList(nullptr),
+
+    fCentrality(-999),
+    fAOD(nullptr),
+    fZDC(nullptr),
+    fUtils(nullptr),
+    fOutputList(nullptr),
+    fHistCent(nullptr),
+    fHist2DVxVyTot(nullptr),
+    fHistVzTot(nullptr),
+    
+    fHist2DForMeanVxVy(nullptr),
+    fHistForMeanVz(nullptr),
+
+    fProfileForZNCGE(nullptr),
+    fProfileForZNAGE(nullptr),
+
+    fHn4DForZNAQxRC(nullptr),
+    fHn4DForZNAQyRC(nullptr),
+    fHn4DForZNAMtRC(nullptr),
+    fHn4DForZNCQxRC(nullptr),
+    fHn4DForZNCQyRC(nullptr),
+    fHn4DForZNCMtRC(nullptr)
 {
+    for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
+    for (size_t i = 0; i < 3; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
     {
-      fProfileQxAQxCCentTot[i] = NULL;
-      fProfileQxAQyCCentTot[i] = NULL;
-      fProfileQyAQxCCentTot[i] = NULL;
-      fProfileQyAQyCCentTot[i] = NULL;
+      fProfileQxAQxCCentTot[i] = nullptr;
+      fProfileQxAQyCCentTot[i] = nullptr;
+      fProfileQyAQxCCentTot[i] = nullptr;
+      fProfileQyAQyCCentTot[i] = nullptr;
     }
 
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
-      fRunList[iRun]                  = NULL;
-      fHist2DVxVy[iRun]               = NULL;
-      fHistVz[iRun]                   = NULL;
-      fProfileZNATowerEnergy[iRun]    = NULL;
-      fProfileZNCTowerEnergy[iRun]    = NULL;
+      fRunList[iRun]                  = nullptr;
+      fHist2DVxVy[iRun]               = nullptr;
+      fHistVz[iRun]                   = nullptr;
+      fProfileZNATowerEnergy[iRun]    = nullptr;
+      fProfileZNCTowerEnergy[iRun]    = nullptr;
 
       //vx vy sigma vz
-      fHn4DQxZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DQyZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DMtZNACentVxVySigmaVz[iRun] = NULL;
-      fHn4DQxZNCCentVxVySigmaVz[iRun] = NULL;
-      fHn4DQyZNCCentVxVySigmaVz[iRun] = NULL;
-      fHn4DMtZNCCentVxVySigmaVz[iRun] = NULL;
+      fHn4DQxZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQyZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DMtZNACentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQxZNCCentVxVySigmaVz[iRun] = nullptr;
+      fHn4DQyZNCCentVxVySigmaVz[iRun] = nullptr;
+      fHn4DMtZNCCentVxVySigmaVz[iRun] = nullptr;
         
       for (size_t i = 0; i < 2; i++)
       {
-        fProfileQxAQxCCent[iRun][i] = NULL;
-        fProfileQxAQyCCent[iRun][i] = NULL;
-        fProfileQyAQxCCent[iRun][i] = NULL;
-        fProfileQyAQyCCent[iRun][i] = NULL;
+        fProfileQxAQxCCent[iRun][i] = nullptr;
+        fProfileQxAQyCCent[iRun][i] = nullptr;
+        fProfileQyAQxCCent[iRun][i] = nullptr;
+        fProfileQyAQyCCent[iRun][i] = nullptr;
 
-        fHist2DPsiACentBin[iRun][i] = NULL;
-        fHist2DPsiCCentBin[iRun][i] = NULL;
+        fHist2DPsiACentBin[iRun][i] = nullptr;
+        fHist2DPsiCCentBin[iRun][i] = nullptr;
       }
     }
-
+    
     // constructor
     DefineInput(0, TChain::Class());    // define the input of the analysis: in this case we take a 'chain' of events
                                         // this chain is created by the analysis manager, so no need to worry about it, 
@@ -136,7 +194,7 @@ AliAnalysisTaskZDCCalibration::~AliAnalysisTaskZDCCalibration()
     if(fOutputList) {
         delete fOutputList;     // at the end of your task, it is deleted from memory by calling this function
     }
-    if(fUtils) delete fUtils;
+    if(fUtils) delete fUtils;  
 }
 //_____________________________________________________________________________
 void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
@@ -154,25 +212,38 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
                                         // to the output file
     fOutputList->SetOwner(kTRUE);       // memory stuff: the list is owner of all objects it contains and will delete them
                                         // if requested (dont worry about this now)
-    fHistCent = new TH1D("fHistCent","Hist Centrality", 100, 0., 100.);
-    fHist2DCentCorr[0] = new TH2D("fHist2DCentCorrBfCut","Centrality V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
-    fHist2DCentCorr[1] = new TH2D("fHist2DCentCorrBfCut","Centrality V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
-    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy ",500,-0.5,0.5,500,-0.5,0.5);
-    fHistVzTot = new TH1D("fHistVzTot","Vz ",200,-50,50);
+    fHistCent = new TH1D("fHistCent","Centrality", 100, 0., 100.);
+    fHist2DCentCorr[0] = new TH2D("fHist2DCentCorrBfCut","Centrality(before Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
+    fHist2DCentCorr[1] = new TH2D("fHist2DCentCorrAfCut","Centrality(after Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
+    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",500,-0.5,0.5,500,-0.5,0.5);
+    fHistVzTot = new TH1D("fHistVzTot","Vz (all run)",200,-50,50);
 
 
     fProfileQxAQxCCentTot[0] = new TProfile("fProfileQxAQxCCentTotBfEC","<XAXC> before Recentering", 100, 0., 100.);
     fProfileQxAQyCCentTot[0] = new TProfile("fProfileQxAQyCCentTotBfEC","<XAYC> before Recentering", 100, 0., 100.);
     fProfileQyAQxCCentTot[0] = new TProfile("fProfileQyAQxCCentTotBfEC","<YAXC> before Recentering", 100, 0., 100.);
     fProfileQyAQyCCentTot[0] = new TProfile("fProfileQyAQyCCentTotBfEC","<YAYC> before Recentering", 100, 0., 100.);
-
     fProfileQxAQxCCentTot[1] = new TProfile("fProfileQxAQxCCentTotAfEC","<XAXC> after Recentering", 100, 0., 100.);        
     fProfileQxAQyCCentTot[1] = new TProfile("fProfileQxAQyCCentTotAfEC","<XAYC> after Recentering", 100, 0., 100.);        
     fProfileQyAQxCCentTot[1] = new TProfile("fProfileQyAQxCCentTotAfEC","<YAXC> after Recentering", 100, 0., 100.);        
     fProfileQyAQyCCentTot[1] = new TProfile("fProfileQyAQyCCentTotAfEC","<YAYC> after Recentering", 100, 0., 100.);    
 
+    fOutputList -> Add(fHistCent);
+    fOutputList -> Add(fHist2DCentCorr[0]);
+    fOutputList -> Add(fHist2DCentCorr[1]);
+    fOutputList -> Add(fHist2DVxVyTot);
+    fOutputList -> Add(fHistVzTot);
+    fOutputList -> Add(fProfileQxAQxCCentTot[0]);
+    fOutputList -> Add(fProfileQxAQyCCentTot[0]);
+    fOutputList -> Add(fProfileQyAQxCCentTot[0]);
+    fOutputList -> Add(fProfileQyAQyCCentTot[0]);
+    fOutputList -> Add(fProfileQxAQxCCentTot[1]);
+    fOutputList -> Add(fProfileQxAQyCCentTot[1]);
+    fOutputList -> Add(fProfileQyAQxCCentTot[1]);
+    fOutputList -> Add(fProfileQyAQyCCentTot[1]);
 
-    int runNumList[91]={
+
+    int runNumList[fnRunMax]={
       139510, 139507, 139505, 139503, 139465, 139438, 139437, 139360, 139329, 139328, 139314, 139310,
       139309, 139173, 139107, 139105, 139038, 139037, 139036, 139029, 139028, 138872, 138871, 138870,
       138837, 138732, 138730, 138666, 138662, 138653, 138652, 138638, 138624, 138621, 138583, 138582,
@@ -238,11 +309,6 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fHn4DForZNCMtRC = new THnSparseD();
       }
 
-      fOutputList -> Add(fHistCent);
-      fOutputList -> Add(fHist2DCentCorr[0]);
-      fOutputList -> Add(fHist2DCentCorr[1]);
-      fOutputList -> Add(fHist2DVxVyTot);
-      fOutputList -> Add(fHistVzTot);
       fOutputList -> Add(fRunList[iRun]);
     }
     
@@ -289,13 +355,15 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     fHist2DVxVy[runNumBin] ->Fill(fVtx[0],fVtx[1]);
     fHistVz[runNumBin] ->Fill(fVtx[2]);
 
+    TList* fZDCCalibrationListThisRun = (TList*)fZDCCalibrationListThisRun->FindObject(Form("%d",runNumBin));
+    
     //GetVexBin
     int vxBin = -1;
     int vyBin = -1;
     int vzBin = -1;
     if(bGetVetexBin) {
-      fHist2DForMeanVxVy = (TH2D*)fVetexList->FindObject(Form("%d",runNumBin))->FindObject("fHist2DVxVy"); 
-      fHistForMeanVz     = (TH1D*)fVetexList->FindObject(Form("%d",runNumBin))->FindObject("fHistVz");
+      fHist2DForMeanVxVy = (TH2D*)fZDCCalibrationListThisRun->FindObject("fHist2DVxVy"); 
+      fHistForMeanVz     = (TH1D*)fZDCCalibrationListThisRun->FindObject("fHistVz");
       double vxMean = fHist2DForMeanVxVy->ProjectionX()->GetMean();
       double vyMean = fHist2DForMeanVxVy->ProjectionY()->GetMean();
       double vxSigmaMean = fHist2DForMeanVxVy->ProjectionX()->GetRMS();
@@ -336,9 +404,9 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       }
     }
 
-    if(bApplyGE && fZDCGEList && !bFillHistForGE) {
-      fProfileForZNCGE = (TProfile*)fZDCGEList->FindObject(Form("%d",runNumBin))->FindObject("fProfileZNCTowerEnergy"); 
-      fProfileForZNAGE = (TProfile*)fZDCGEList->FindObject(Form("%d",runNumBin))->FindObject("fProfileZNATowerEnergy"); 
+    if(bApplyGE) {
+      fProfileForZNCGE = (TProfile*)fZDCCalibrationListThisRun->FindObject("fProfileZNCTowerEnergy"); 
+      fProfileForZNAGE = (TProfile*)fZDCCalibrationListThisRun->FindObject("fProfileZNATowerEnergy"); 
       for (int iTower = 0; iTower < 4; ++iTower) {
         EZNC[iTower] = EZNARaw[iTower + 1] * (fProfileForZNCGE->GetBinContent(iTower + 1.5)) / (fProfileZNCTowerEnergy[runNumBin]->GetBinContent(1.5));
         EZNA[iTower] = EZNARaw[iTower + 1] * (fProfileForZNAGE->GetBinContent(iTower + 1.5)) / (fProfileZNATowerEnergy[runNumBin]->GetBinContent(1.5));
@@ -394,14 +462,20 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     fHist2DPsiCCentBin[fnRunMax][0]->Fill(fCentrality,atan2(QyC,QxC));
 
     if(bApplyRC) {
-      
-      double QxCMean = fHn4DQxZNCCentVxVySigmaVz[runNum] -> GetBinContent(fHn4DQxZNCCentVxVySigmaVz[runNum]->GetBin(fillPosition));
-      double QyCMean = fHn4DQyZNCCentVxVySigmaVz[runNum] -> GetBinContent(fHn4DQyZNCCentVxVySigmaVz[runNum]->GetBin(fillPosition));
-      double MCMean  = fHn4DMtZNCCentVxVySigmaVz[runNum] -> GetBinContent(fHn4DMtZNCCentVxVySigmaVz[runNum]->GetBin(fillPosition));
 
-      double QxAMean = fHn4DQxZNACentVxVySigmaVz[runNum] -> GetBinContent(fHn4DQxZNACentVxVySigmaVz[runNum]->GetBin(fillPosition));
-      double QyAMean = fHn4DQyZNACentVxVySigmaVz[runNum] -> GetBinContent(fHn4DQyZNACentVxVySigmaVz[runNum]->GetBin(fillPosition));
-      double MAMean  = fHn4DMtZNACentVxVySigmaVz[runNum] -> GetBinContent(fHn4DMtZNACentVxVySigmaVz[runNum]->GetBin(fillPosition));
+      fHn4DForZNAQxRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DQxZNCCentVxVySigmaVz");
+      fHn4DForZNAQyRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DQyZNCCentVxVySigmaVz");
+      fHn4DForZNAMtRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DMtZNCCentVxVySigmaVz");
+      fHn4DForZNCQxRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DQxZNACentVxVySigmaVz");
+      fHn4DForZNCQyRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DQyZNACentVxVySigmaVz");
+      fHn4DForZNCMtRC = (THnSparse*)fZDCCalibrationListThisRun->FindObject("fHn4DMtZNACentVxVySigmaVz");
+
+      double QxCMean = fHn4DForZNAQxRC -> GetBinContent(fHn4DForZNAQxRC->GetBin(fillPosition));
+      double QyCMean = fHn4DForZNAQyRC -> GetBinContent(fHn4DForZNAQyRC->GetBin(fillPosition));
+      double MCMean  = fHn4DForZNAMtRC -> GetBinContent(fHn4DForZNAMtRC->GetBin(fillPosition));
+      double QxAMean = fHn4DForZNCQxRC -> GetBinContent(fHn4DForZNCQxRC->GetBin(fillPosition));
+      double QyAMean = fHn4DForZNCQyRC -> GetBinContent(fHn4DForZNCQyRC->GetBin(fillPosition));
+      double MAMean  = fHn4DForZNCMtRC -> GetBinContent(fHn4DForZNCMtRC->GetBin(fillPosition));
 
       if(MCMean < 1.e-6) return;
       if(MAMean < 1.e-6) return;
@@ -428,7 +502,9 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
       fHist2DPsiACentBin[fnRunMax][1]->Fill(fCentrality,atan2(QyA,QxA));
       fHist2DPsiCCentBin[fnRunMax][1]->Fill(fCentrality,atan2(QyC,QxC));
-    }    
+    }
+
+    delete fZDCCalibrationListThisRun;    
                                                         // continue until all the tracks are processed
     PostData(1, fOutputList);                           // stream the results the analysis of this event to
                                                         // the output manager which will take care of writing
