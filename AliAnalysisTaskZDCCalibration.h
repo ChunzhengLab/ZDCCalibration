@@ -18,6 +18,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         virtual void            UserExec(Option_t* option);
         virtual void            Terminate(Option_t* option);
 
+        virtual void            FirstFillHistVetex(bool fillHistVetex)          {bFirstFillHistVetex = fillHistVetex;}
         virtual void            FillHistForGainEqualization(bool fillHistForGE) {bFillHistForGE = fillHistForGE;}
         virtual void            FillHistForQVZDCRecentering(bool fillHistForRC) {bFillHistForRC = fillHistForRC;}
 
@@ -29,10 +30,10 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         virtual void            FillQAHist(bool fillQAHist)                 {bFillQAHist = fillQAHist;}
 
     private:
+        bool                    bFirstFillHistVetex;
         bool                    bFillHistForGE;
         bool                    bFillHistForRC;
 
-        bool                    bGetVetexBin;
         bool                    bApplyGE;
         bool                    bApplyRC;
         bool                    bFillQAHist;

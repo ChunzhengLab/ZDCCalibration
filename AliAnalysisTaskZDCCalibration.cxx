@@ -41,6 +41,7 @@ using namespace std;            // std namespace: so you can do things like 'cou
 ClassImp(AliAnalysisTaskZDCCalibration) // classimp: necessary for root
 
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTaskSE(), 
+    bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
     bApplyGE(kFALSE),
@@ -113,9 +114,9 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
+    bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
-    bGetVetexBin(kFALSE),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
     bFillQAHist(kFALSE),
@@ -409,7 +410,7 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     fHistVzTot->Fill(fVtx[2]);
 
     TList* fZDCCalibrationListThisRun = nullptr;
-    fZDCCalibrationListThisRun = (TList*)fZDCCalibrationList->FindObject(Form("%d",runNum));
+    if(!bFirstFillHistVetex) fZDCCalibrationListThisRun = (TList*)fZDCCalibrationList->FindObject(Form("%d",runNum));
 
     const double x[4] = {-1.75, 1.75, -1.75, 1.75};
     const double y[4] = {-1.75, -1.75, 1.75, 1.75};

@@ -7,7 +7,7 @@
 void runAnalysis()
 {
     // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
-    Bool_t local = kTRUE;
+    Bool_t local = kFALSE;
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t gridTest = kFALSE;
     
@@ -89,8 +89,11 @@ void runAnalysis()
         alienHandler->SetMergeViaJDL(kTRUE);
 
         // define the output folders
-        alienHandler->SetGridWorkingDir("myWorkingDir");
-        alienHandler->SetGridOutputDir("myOutputDir");
+        alienHandler->SetGridWorkingDir("ZDCCalibration_fillVetexHist");
+        //alienHandler->SetGridWorkingDir("ZDCCalibration_fillHistForGE");
+        //alienHandler->SetGridWorkingDir("ZDCCalibration_fillHistForRC");
+        //alienHandler->SetGridWorkingDir("ZDCCalibration_finishZDCCali");
+        alienHandler->SetGridOutputDir("Output");
 
         // connect the alien plugin to the manager
         mgr->SetGridHandler(alienHandler);
@@ -102,6 +105,7 @@ void runAnalysis()
             mgr->StartAnalysis("grid");
         } else {
             // else launch the full grid analysis
+            //alienHandler->SetRunMode("terminate");
             alienHandler->SetRunMode("full");
             mgr->StartAnalysis("grid");
         }

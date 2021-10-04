@@ -21,30 +21,35 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     AliAnalysisTaskZDCCalibration* task = new AliAnalysisTaskZDCCalibration(name.Data());   
     if(!task) return 0x0;
     task->SelectCollisionCandidates(AliVEvent::kMB);
+    bool isFirstFillVetex = kTRUE;
+    task->FirstFillHistVetex(isFirstFillVetex);
+
     // add your task to the manager
     mgr->AddTask(task);
 
-    // add list for ZDC Calibration
-    TString ZDCCalibrationFileName = "ZDCCalibration.root";
-    TFile* ZDCCalibrationFile = TFile::Open(ZDCCalibrationFileName,"READ");
-    if(!ZDCCalibrationFile) {
-        cout << "ERROR: ZDC Calibration File is not found!" << endl;
-        exit(1);
+    if (!isFirstFillVetex)
+    {
+      TGrid::Connect("alien://");
+      // add list for ZDC Calibration
+      TString ZDCCalibrationFileName = "alien:///alice/cern.ch/user/c/chunzhen/ZDCCalibration.root";
+      TFile* ZDCCalibrationFile = TFile::Open(ZDCCalibrationFileName,"READ");
+      if(!ZDCCalibrationFile) {
+          cout << "ERROR: ZDC Calibration File is not found!" << endl;
+          exit(1);
+      }
+      gROOT->cd();
+      TDirectory* inputDir = ZDCCalibrationFile->GetDirectory("myTask");
+      TList* ZDCCalibrationList = nullptr;
+      inputDir->GetObject("Output",ZDCCalibrationList);
+      if(ZDCCalibrationList) {
+          task->SetZDCCalibrationList(ZDCCalibrationList);
+          cout << "ZDC Calibration file: set! (from " <<  ZDCCalibrationFileName.Data() << ")" << endl;
+      } else {
+          cout << "ERROR: ZDC Calibration file: TList not found!" << endl;
+          exit(1);
+      }
+      delete ZDCCalibrationFile;
     }
-    gROOT->cd();
-
-    TDirectory* inputDir = ZDCCalibrationFile->GetDirectory("myTask");
-    TList* ZDCCalibrationList = nullptr;
-
-    inputDir->GetObject("Output",ZDCCalibrationList);
-    if(ZDCCalibrationList) {
-        task->SetZDCCalibrationList(ZDCCalibrationList);
-        cout << "ZDC Calibration file: set! (from " <<  ZDCCalibrationFileName.Data() << ")" << endl;
-    } else {
-        cout << "ERROR: ZDC Calibration file: TList not found!" << endl;
-        exit(1);
-    }
-    delete ZDCCalibrationFile;
 
     // your task needs input: here we connect the manager to your task
     mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
