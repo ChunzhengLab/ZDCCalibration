@@ -42,10 +42,10 @@ ClassImp(AliAnalysisTaskZDCCalibration) // classimp: necessary for root
 
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTaskSE(), 
     bFillHistForGE(kTRUE),
-    bFillHistForRC(kTRUE),
-    bGetVetexBin(kTRUE),
-    bApplyGE(kTRUE),
-    bApplyRC(kTRUE),
+    bFillHistForRC(kFALSE),
+    bApplyGE(kFALSE),
+    bApplyRC(kFALSE),
+    bFillQAHist(kFALSE),
 
     fZDCCalibrationList(nullptr),
 
@@ -54,6 +54,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fZDC(nullptr),
     fUtils(nullptr),
     fOutputList(nullptr),
+    fQAList(nullptr),
     fHistCent(nullptr),
     fHist2DVxVyTot(nullptr),
     fHistVzTot(nullptr),
@@ -84,6 +85,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
+      fQAListThisRun[iRun]            = nullptr;
       fHist2DVxVy[iRun]               = nullptr;
       fHistVz[iRun]                   = nullptr;
       fProfileZNATowerEnergy[iRun]    = nullptr;
@@ -112,10 +114,11 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
     bFillHistForGE(kTRUE),
-    bFillHistForRC(kTRUE),
-    bGetVetexBin(kTRUE),
-    bApplyGE(kTRUE),
-    bApplyRC(kTRUE),
+    bFillHistForRC(kFALSE),
+    bGetVetexBin(kFALSE),
+    bApplyGE(kFALSE),
+    bApplyRC(kFALSE),
+    bFillQAHist(kFALSE),
 
     fZDCCalibrationList(nullptr),
 
@@ -124,6 +127,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fZDC(nullptr),
     fUtils(nullptr),
     fOutputList(nullptr),
+    fQAList(nullptr),
     fHistCent(nullptr),
     fHist2DVxVyTot(nullptr),
     fHistVzTot(nullptr),
@@ -154,6 +158,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
+      fQAListThisRun[iRun]            = nullptr;
       fHist2DVxVy[iRun]               = nullptr;
       fHistVz[iRun]                   = nullptr;
       fProfileZNATowerEnergy[iRun]    = nullptr;
@@ -192,9 +197,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
 AliAnalysisTaskZDCCalibration::~AliAnalysisTaskZDCCalibration()
 {
     // destructor
-    if(fOutputList) {
-        delete fOutputList;     // at the end of your task, it is deleted from memory by calling this function
-    }
+    if(fOutputList) delete fOutputList;     // at the end of your task, it is deleted from memory by calling this function
     if(fUtils) delete fUtils;  
 }
 //_____________________________________________________________________________
@@ -219,30 +222,37 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
     fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",500,-0.5,0.5,500,-0.5,0.5);
     fHistVzTot = new TH1D("fHistVzTot","Vz (all run)",200,-50,50);
 
-
-    fProfileQxAQxCCentTot[0] = new TProfile("fProfileQxAQxCCentTotBfRC","<XAXC> before Recentering", 100, 0., 100.);
-    fProfileQxAQyCCentTot[0] = new TProfile("fProfileQxAQyCCentTotBfRC","<XAYC> before Recentering", 100, 0., 100.);
-    fProfileQyAQxCCentTot[0] = new TProfile("fProfileQyAQxCCentTotBfRC","<YAXC> before Recentering", 100, 0., 100.);
-    fProfileQyAQyCCentTot[0] = new TProfile("fProfileQyAQyCCentTotBfRC","<YAYC> before Recentering", 100, 0., 100.);
-    fProfileQxAQxCCentTot[1] = new TProfile("fProfileQxAQxCCentTotAfRC","<XAXC> after Recentering", 100, 0., 100.);        
-    fProfileQxAQyCCentTot[1] = new TProfile("fProfileQxAQyCCentTotAfRC","<XAYC> after Recentering", 100, 0., 100.);        
-    fProfileQyAQxCCentTot[1] = new TProfile("fProfileQyAQxCCentTotAfRC","<YAXC> after Recentering", 100, 0., 100.);        
-    fProfileQyAQyCCentTot[1] = new TProfile("fProfileQyAQyCCentTotAfRC","<YAYC> after Recentering", 100, 0., 100.);    
-
     fOutputList -> Add(fHistCent);
     fOutputList -> Add(fHist2DCentCorr[0]);
     fOutputList -> Add(fHist2DCentCorr[1]);
     fOutputList -> Add(fHist2DVxVyTot);
     fOutputList -> Add(fHistVzTot);
-    fOutputList -> Add(fProfileQxAQxCCentTot[0]);
-    fOutputList -> Add(fProfileQxAQyCCentTot[0]);
-    fOutputList -> Add(fProfileQyAQxCCentTot[0]);
-    fOutputList -> Add(fProfileQyAQyCCentTot[0]);
-    fOutputList -> Add(fProfileQxAQxCCentTot[1]);
-    fOutputList -> Add(fProfileQxAQyCCentTot[1]);
-    fOutputList -> Add(fProfileQyAQxCCentTot[1]);
-    fOutputList -> Add(fProfileQyAQyCCentTot[1]);
 
+    if(bFillQAHist){
+      fQAList = new TList();
+      fQAList ->SetOwner(kTRUE);
+      fQAList ->SetName("QA Total");
+
+      fProfileQxAQxCCentTot[0] = new TProfile("fProfileQxAQxCCentTotBfRC","<XAXC> before Recentering", 100, 0., 100.);
+      fProfileQxAQyCCentTot[0] = new TProfile("fProfileQxAQyCCentTotBfRC","<XAYC> before Recentering", 100, 0., 100.);
+      fProfileQyAQxCCentTot[0] = new TProfile("fProfileQyAQxCCentTotBfRC","<YAXC> before Recentering", 100, 0., 100.);
+      fProfileQyAQyCCentTot[0] = new TProfile("fProfileQyAQyCCentTotBfRC","<YAYC> before Recentering", 100, 0., 100.);
+      fProfileQxAQxCCentTot[1] = new TProfile("fProfileQxAQxCCentTotAfRC","<XAXC> after Recentering", 100, 0., 100.);        
+      fProfileQxAQyCCentTot[1] = new TProfile("fProfileQxAQyCCentTotAfRC","<XAYC> after Recentering", 100, 0., 100.);        
+      fProfileQyAQxCCentTot[1] = new TProfile("fProfileQyAQxCCentTotAfRC","<YAXC> after Recentering", 100, 0., 100.);        
+      fProfileQyAQyCCentTot[1] = new TProfile("fProfileQyAQyCCentTotAfRC","<YAYC> after Recentering", 100, 0., 100.);    
+
+      fQAList -> Add(fProfileQxAQxCCentTot[0]);
+      fQAList -> Add(fProfileQxAQyCCentTot[0]);
+      fQAList -> Add(fProfileQyAQxCCentTot[0]);
+      fQAList -> Add(fProfileQyAQyCCentTot[0]);
+      fQAList -> Add(fProfileQxAQxCCentTot[1]);
+      fQAList -> Add(fProfileQxAQyCCentTot[1]);
+      fQAList -> Add(fProfileQyAQxCCentTot[1]);
+      fQAList -> Add(fProfileQyAQyCCentTot[1]);
+
+      fOutputList->Add(fQAList);
+    }
 
     int runNumList[fnRunMax]={
       139510, 139507, 139505, 139503, 139465, 139438, 139437, 139360, 139329, 139328, 139314, 139310,
@@ -312,34 +322,42 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fHn4DForZNCMtRC = new THnSparseD();
       }
       
-      fProfileQxAQxCCent[iRun][0] = new TProfile("fProfileQxAQxCCentBfRCThisRun",Form("<XAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
-      fProfileQxAQyCCent[iRun][0] = new TProfile("fProfileQxAQyCCentBfRCThisRun",Form("<XAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-      fProfileQyAQxCCent[iRun][0] = new TProfile("fProfileQyAQxCCentBfRCThisRun",Form("<YAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-      fProfileQyAQyCCent[iRun][0] = new TProfile("fProfileQyAQyCCentBfRCThisRun",Form("<YAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-      fProfileQxAQxCCent[iRun][1] = new TProfile("fProfileQxAQxCCentAfRCThisRun",Form("<XAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
-      fProfileQxAQyCCent[iRun][1] = new TProfile("fProfileQxAQyCCentAfRCThisRun",Form("<XAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-      fProfileQyAQxCCent[iRun][1] = new TProfile("fProfileQyAQxCCentAfRCThisRun",Form("<YAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-      fProfileQyAQyCCent[iRun][1] = new TProfile("fProfileQyAQyCCentAfRCThisRun",Form("<YAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+      if (bFillQAHist)
+      {
+        fQAListThisRun[iRun] = new TList();
+        fQAListThisRun[iRun] ->SetOwner();
+        fQAListThisRun[iRun] ->SetName("QA");
 
-      fRunList[iRun]->Add(fProfileQxAQxCCent[iRun][0]);
-      fRunList[iRun]->Add(fProfileQxAQyCCent[iRun][0]);
-      fRunList[iRun]->Add(fProfileQyAQxCCent[iRun][0]);
-      fRunList[iRun]->Add(fProfileQyAQyCCent[iRun][0]);
-      fRunList[iRun]->Add(fProfileQxAQxCCent[iRun][1]);
-      fRunList[iRun]->Add(fProfileQxAQyCCent[iRun][1]);
-      fRunList[iRun]->Add(fProfileQyAQxCCent[iRun][1]);
-      fRunList[iRun]->Add(fProfileQyAQyCCent[iRun][1]);
+        fProfileQxAQxCCent[iRun][0] = new TProfile("fProfileQxAQxCCentBfRCThisRun",Form("<XAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
+        fProfileQxAQyCCent[iRun][0] = new TProfile("fProfileQxAQyCCentBfRCThisRun",Form("<XAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+        fProfileQyAQxCCent[iRun][0] = new TProfile("fProfileQyAQxCCentBfRCThisRun",Form("<YAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+        fProfileQyAQyCCent[iRun][0] = new TProfile("fProfileQyAQyCCentBfRCThisRun",Form("<YAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+        fProfileQxAQxCCent[iRun][1] = new TProfile("fProfileQxAQxCCentAfRCThisRun",Form("<XAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
+        fProfileQxAQyCCent[iRun][1] = new TProfile("fProfileQxAQyCCentAfRCThisRun",Form("<XAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+        fProfileQyAQxCCent[iRun][1] = new TProfile("fProfileQyAQxCCentAfRCThisRun",Form("<YAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+        fProfileQyAQyCCent[iRun][1] = new TProfile("fProfileQyAQyCCentAfRCThisRun",Form("<YAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
 
-      fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentBfRC",Form("Hist2D Cent vs. PsiA before Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
-      fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentBfRC",Form("Hist2D Cent vs. PsiC before Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
-      fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentAfRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
-      fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentAfRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
+        fQAListThisRun[iRun]->Add(fProfileQxAQxCCent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fProfileQxAQyCCent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fProfileQyAQxCCent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fProfileQyAQyCCent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fProfileQxAQxCCent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fProfileQxAQyCCent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fProfileQyAQxCCent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fProfileQyAQyCCent[iRun][1]);
+
+        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentBfRC",Form("Hist2D Cent vs. PsiA before Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
+        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentBfRC",Form("Hist2D Cent vs. PsiC before Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
+        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentAfRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
+        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentAfRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,180,-TMath::TwoPi(),TMath::TwoPi());
       
-      fRunList[iRun]->Add(fHist2DPsiACent[iRun][0]);
-      fRunList[iRun]->Add(fHist2DPsiCCent[iRun][0]);
-      fRunList[iRun]->Add(fHist2DPsiACent[iRun][1]);
-      fRunList[iRun]->Add(fHist2DPsiCCent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][0]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][1]);
 
+        fRunList[iRun]->Add(fQAListThisRun[iRun]);
+      }
 
       fOutputList -> Add(fRunList[iRun]);
     }
@@ -395,8 +413,8 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
     const double x[4] = {-1.75, 1.75, -1.75, 1.75};
     const double y[4] = {-1.75, -1.75, 1.75, 1.75};
-    const double* EZNARaw = fZDC->GetZNATowerEnergy();
     const double* EZNCRaw = fZDC->GetZNCTowerEnergy();
+    const double* EZNARaw = fZDC->GetZNATowerEnergy();
 
     double EZNC[4] = {0.,0.,0.,0.}; 
     double EZNA[4] = {0.,0.,0.,0.};
@@ -412,7 +430,7 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fProfileForZNCGE = (TProfile*)fZDCCalibrationListThisRun->FindObject("profileZNCTowerEnergy"); 
       fProfileForZNAGE = (TProfile*)fZDCCalibrationListThisRun->FindObject("profileZNATowerEnergy"); 
       for (int iTower = 0; iTower < 4; ++iTower) {
-        EZNC[iTower] = EZNARaw[iTower + 1] * (fProfileForZNCGE->GetBinContent(2)) / (fProfileForZNCGE->GetBinContent(iTower + 2));
+        EZNC[iTower] = EZNCRaw[iTower + 1] * (fProfileForZNCGE->GetBinContent(2)) / (fProfileForZNCGE->GetBinContent(iTower + 2));
         EZNA[iTower] = EZNARaw[iTower + 1] * (fProfileForZNAGE->GetBinContent(2)) / (fProfileForZNAGE->GetBinContent(iTower + 2));
       }
     }
@@ -439,33 +457,40 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     int vxBin = -1;
     int vyBin = -1;
     int vzBin = -1;
-    if(bGetVetexBin) {
+    double fillPosition[4] = {fCentrality,-999.,-999.,-999.};
+
+    if (bFillHistForRC || bApplyRC)
+    {
       fHist2DForMeanVxVy = (TH2D*)fZDCCalibrationListThisRun->FindObject("hist2DVxVy"); 
       fHistForMeanVz     = (TH1D*)fZDCCalibrationListThisRun->FindObject("histVz");
       double vxMean = fHist2DForMeanVxVy->ProjectionX()->GetMean();
       double vyMean = fHist2DForMeanVxVy->ProjectionY()->GetMean();
       double vxSigmaMean = fHist2DForMeanVxVy->ProjectionX()->GetRMS();
       double vySigmaMean = fHist2DForMeanVxVy->ProjectionY()->GetRMS();
-      if(vxSigmaMean < 1.e-6 || vxSigmaMean < 1.e-6) return;
+      if(vxSigmaMean < 1.e-6 || vySigmaMean < 1.e-6) return;
 
-      double vxSigma = (fVtx[0] - vxMean)/vxSigmaMean;
-      double vySigma = (fVtx[1] - vyMean)/vxSigmaMean;
+      double vxNSigma = (fVtx[0] - vxMean)/vxSigmaMean;
+      double vyNSigma = (fVtx[1] - vyMean)/vySigmaMean;
 
-      if     (vxSigma>-3.   && vxSigma<=0.42)  {vxBin=1;}
-      else if(vxSigma>-0.42 && vxSigma<=0.42)  {vxBin=2;}
-      else if(vxSigma>0.42  && vxSigma<=3.  )  {vxBin=3;}
+      if     (vxNSigma>-3.   && vxNSigma<=-0.42)  {vxBin=1;}
+      else if(vxNSigma>-0.42 && vxNSigma<= 0.42)  {vxBin=2;}
+      else if(vxNSigma> 0.42 && vxNSigma<= 3.  )  {vxBin=3;}
 
-      if     (vySigma>-3.   && vySigma<=0.42)  {vyBin=1;}
-      else if(vySigma>-0.42 && vySigma<=0.42)  {vyBin=2;}
-      else if(vySigma>0.42  && vySigma<=3.  )  {vyBin=3;}
+      if     (vyNSigma>-3.   && vyNSigma<=-0.42)  {vyBin=1;}
+      else if(vyNSigma>-0.42 && vyNSigma<= 0.42)  {vyBin=2;}
+      else if(vyNSigma> 0.42 && vyNSigma<= 3.  )  {vyBin=3;}
      
-      if     (fVtx[2]<=-2.25)                  {vzBin=1;}
-      else if(fVtx[2]> -2.25 && fVtx[2] < 2.75){vzBin=2;}
-      else if(fVtx[2]>= 2.75)                  {vzBin=3;}
+      if     (fVtx[2]> -10.  && fVtx[2] <= -2.5)  {vzBin=1;}
+      else if(fVtx[2]> -2.5  && fVtx[2] <=  2.5)  {vzBin=2;}
+      else if(fVtx[2]>  2.5  && fVtx[2] >   10.)  {vzBin=3;}
 
       if(vxBin <= 0 && vyBin <= 0 && vzBin <= 0) return;
+      
+      fillPosition[1] = vxBin-0.5;
+      fillPosition[2] = vyBin-0.5;
+      fillPosition[3] = vzBin-0.5;
     }
-    double fillPosition[4] = {fCentrality,vxBin-0.5,vyBin-0.5,vzBin-0.5};
+
     if(bFillHistForRC) {
       fHn4DQxZNCCentVxVySigmaVz[runNumBin] -> Fill(fillPosition,QxC);
       fHn4DQyZNCCentVxVySigmaVz[runNumBin] -> Fill(fillPosition,QyC);
@@ -476,23 +501,28 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHn4DMtZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,MA);
     }
 
-    QxC /= MC; 
-    QyC /= MC; 
-    QxA /= MA; 
-    QyA /= MA; 
-    
-    fProfileQxAQxCCent[runNumBin][0]->Fill(fCentrality,QxA*QxC);
-    fProfileQxAQyCCent[runNumBin][0]->Fill(fCentrality,QxA*QyC);
-    fProfileQyAQxCCent[runNumBin][0]->Fill(fCentrality,QyA*QxC);
-    fProfileQyAQyCCent[runNumBin][0]->Fill(fCentrality,QyA*QyC);
+    if(bFillQAHist) {
+      QxC /= MC; 
+      QyC /= MC; 
+      QxA /= MA; 
+      QyA /= MA; 
 
-    fProfileQxAQxCCentTot[0]->Fill(fCentrality,QxA*QxC);
-    fProfileQxAQyCCentTot[0]->Fill(fCentrality,QxA*QyC);
-    fProfileQyAQxCCentTot[0]->Fill(fCentrality,QyA*QxC);
-    fProfileQyAQyCCentTot[0]->Fill(fCentrality,QyA*QyC);
+      fProfileQxAQxCCent[runNumBin][0]->Fill(fCentrality,QxA*QxC);
+      fProfileQxAQyCCent[runNumBin][0]->Fill(fCentrality,QxA*QyC);
+      fProfileQyAQxCCent[runNumBin][0]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCent[runNumBin][0]->Fill(fCentrality,QyA*QyC);
 
-    fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,atan2(QyA,QxA));
-    fHist2DPsiCCent[runNumBin][0]->Fill(fCentrality,atan2(QyC,QxC));
+      fProfileQxAQxCCentTot[0]->Fill(fCentrality,QxA*QxC);
+      fProfileQxAQyCCentTot[0]->Fill(fCentrality,QxA*QyC);
+      fProfileQyAQxCCentTot[0]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCentTot[0]->Fill(fCentrality,QyA*QyC);
+
+      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+      double psiA = atan2(QyA,QxA)>0. ? atan2(QyA,QxA) : atan2(QyA,QxA)+TMath::TwoPi();
+
+      fHist2DPsiCCent[runNumBin][0]->Fill(fCentrality,psiC);
+      fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,psiA);
+    }
 
     if(bApplyRC) {
 
@@ -513,28 +543,33 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       if(MCMean < 1.e-6) return;
       if(MAMean < 1.e-6) return;
 
-      QxCMean /= MCMean; 
-      QyCMean /= MCMean; 
-      QxAMean /= MAMean; 
-      QyAMean /= MAMean;
+      if(bFillQAHist) {
+        QxCMean /= MCMean; 
+        QyCMean /= MCMean; 
+        QxAMean /= MAMean; 
+        QyAMean /= MAMean;
 
-      QxC -= QxCMean; 
-      QyC -= QyCMean; 
-      QxA -= QxAMean; 
-      QyA -= QyAMean; 
+        QxC -= QxCMean; 
+        QyC -= QyCMean; 
+        QxA -= QxAMean; 
+        QyA -= QyAMean; 
     
-      fProfileQxAQxCCent[runNumBin][1]->Fill(fCentrality,QxA*QxC);
-      fProfileQxAQyCCent[runNumBin][1]->Fill(fCentrality,QxA*QyC);
-      fProfileQyAQxCCent[runNumBin][1]->Fill(fCentrality,QyA*QxC);
-      fProfileQyAQyCCent[runNumBin][1]->Fill(fCentrality,QyA*QyC);
+        fProfileQxAQxCCent[runNumBin][1]->Fill(fCentrality,QxA*QxC);
+        fProfileQxAQyCCent[runNumBin][1]->Fill(fCentrality,QxA*QyC);
+        fProfileQyAQxCCent[runNumBin][1]->Fill(fCentrality,QyA*QxC);
+        fProfileQyAQyCCent[runNumBin][1]->Fill(fCentrality,QyA*QyC);
 
-      fProfileQxAQxCCentTot[1]->Fill(fCentrality,QxA*QxC);
-      fProfileQxAQyCCentTot[1]->Fill(fCentrality,QxA*QyC);
-      fProfileQyAQxCCentTot[1]->Fill(fCentrality,QyA*QxC);
-      fProfileQyAQyCCentTot[1]->Fill(fCentrality,QyA*QyC);
+        fProfileQxAQxCCentTot[1]->Fill(fCentrality,QxA*QxC);
+        fProfileQxAQyCCentTot[1]->Fill(fCentrality,QxA*QyC);
+        fProfileQyAQxCCentTot[1]->Fill(fCentrality,QyA*QxC);
+        fProfileQyAQyCCentTot[1]->Fill(fCentrality,QyA*QyC);
 
-      fHist2DPsiACent[runNumBin][1]->Fill(fCentrality,atan2(QyA,QxA));
-      fHist2DPsiCCent[runNumBin][1]->Fill(fCentrality,atan2(QyC,QxC));
+        double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+        double psiA = atan2(QyA,QxA)>0. ? atan2(QyA,QxA) : atan2(QyA,QxA)+TMath::TwoPi();
+
+        fHist2DPsiCCent[runNumBin][1]->Fill(fCentrality,psiC);
+        fHist2DPsiACent[runNumBin][1]->Fill(fCentrality,psiA);
+      }
     }
                                                         // continue until all the tracks are processed
     PostData(1, fOutputList);                           // stream the results the analysis of this event to
@@ -548,22 +583,6 @@ void AliAnalysisTaskZDCCalibration::Terminate(Option_t *)
     // called at the END of the analysis (when all events are processed)
 }
 //_____________________________________________________________________________
-int AliAnalysisTaskZDCCalibration::GetCentBin(double centrality)
-{
-  int CentBin=-1;
-  if (centrality>0.  && centrality<5. ) CentBin=0;
-  if (centrality>5.  && centrality<10.) CentBin=1;
-  if (centrality>10. && centrality<20.) CentBin=2;
-  if (centrality>20. && centrality<30.) CentBin=3;
-  if (centrality>30. && centrality<40.) CentBin=4;
-  if (centrality>40. && centrality<50.) CentBin=5;
-  if (centrality>50. && centrality<60.) CentBin=6;
-  if (centrality>60. && centrality<70.) CentBin=7;
-  if (centrality>70. && centrality<80.) CentBin=8;
-  if (centrality>80. && centrality<90.) CentBin=9;
-  if (centrality>90. && centrality<100.) CentBin=10;
-  return CentBin;
-}
 
 int AliAnalysisTaskZDCCalibration::GetRunNumBin(int runNum)
 {

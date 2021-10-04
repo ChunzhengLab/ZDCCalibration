@@ -26,6 +26,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
 
         virtual void            SetZDCCalibrationList(TList* const wlist)   {this->fZDCCalibrationList = wlist;}
 
+        virtual void            FillQAHist(bool fillQAHist)                 {bFillQAHist = fillQAHist;}
+
     private:
         bool                    bFillHistForGE;
         bool                    bFillHistForRC;
@@ -33,6 +35,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         bool                    bGetVetexBin;
         bool                    bApplyGE;
         bool                    bApplyRC;
+        bool                    bFillQAHist;
 
         TList*                  fZDCCalibrationList;
 
@@ -43,6 +46,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         AliAODZDC*              fZDC;
         AliAnalysisUtils*       fUtils;
         TList*                  fOutputList;    //! output list
+        TList*                  fQAList;
         TH1D*                   fHistCent;
         TH2D*                   fHist2DCentCorr[2];
         TH2D*                   fHist2DVxVyTot;
@@ -55,6 +59,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
 
         const static int        fnRunMax = 91;
         TList*                  fRunList[fnRunMax];
+        TList*                  fQAListThisRun[fnRunMax];
 
         //Get Vtx
         //Write
@@ -63,7 +68,6 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //Read
         TH2D*                   fHist2DForMeanVxVy;
         TH1D*                   fHistForMeanVz;    
-
 
         //For GE
         //Write
@@ -99,7 +103,6 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TH2D*                   fHist2DPsiACent[fnRunMax][2];
         TH2D*                   fHist2DPsiCCent[fnRunMax][2];
 
-        int                     GetCentBin(double centrality);
         int                     GetRunNumBin(int runNum);
 
         AliAnalysisTaskZDCCalibration(const AliAnalysisTaskZDCCalibration&); // not implemented
