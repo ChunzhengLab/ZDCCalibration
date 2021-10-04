@@ -89,8 +89,7 @@ void runAnalysis()
         alienHandler->SetMergeViaJDL(kTRUE);
 
         // define the output folders
-        alienHandler->SetGridWorkingDir("ZDCCalibration_fillVetexHist");
-        //alienHandler->SetGridWorkingDir("ZDCCalibration_fillHistForGE");
+        alienHandler->SetGridWorkingDir("ZDCCalibration_fillHistForGE");
         //alienHandler->SetGridWorkingDir("ZDCCalibration_fillHistForRC");
         //alienHandler->SetGridWorkingDir("ZDCCalibration_finishZDCCali");
         alienHandler->SetGridOutputDir("Output");
