@@ -53,6 +53,11 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TH2D*                   fHist2DVxVyTot;
         TH1D*                   fHistVzTot;
 
+        TProfile*               fProfileQxCCentTot[2];
+        TProfile*               fProfileQyCCentTot[2];
+        TProfile*               fProfileQxACentTot[2];
+        TProfile*               fProfileQyACentTot[2];
+
         TProfile*               fProfileQxAQxCCentTot[2];
         TProfile*               fProfileQxAQyCCentTot[2];
         TProfile*               fProfileQyAQxCCentTot[2];
@@ -74,6 +79,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //Write
         TProfile*               fProfileZNCTowerEnergy[fnRunMax];
         TProfile*               fProfileZNATowerEnergy[fnRunMax];
+        TProfile*               fProfileZNCTowerEnergyBfGE[fnRunMax];
+        TProfile*               fProfileZNATowerEnergyBfGE[fnRunMax];
         //Read
         TProfile*               fProfileForZNCGE;
         TProfile*               fProfileForZNAGE;
@@ -96,10 +103,15 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         THnSparseD*              fHn4DForZNCMtRC;
 
         //Corr
+        TProfile*               fProfileQxCCent[fnRunMax][2];
+        TProfile*               fProfileQyCCent[fnRunMax][2];
+        TProfile*               fProfileQxACent[fnRunMax][2];
+        TProfile*               fProfileQyACent[fnRunMax][2];
         TProfile*               fProfileQxAQxCCent[fnRunMax][2];
         TProfile*               fProfileQxAQyCCent[fnRunMax][2];
         TProfile*               fProfileQyAQxCCent[fnRunMax][2];
         TProfile*               fProfileQyAQyCCent[fnRunMax][2];
+
         //Psi
         TH2D*                   fHist2DPsiACent[fnRunMax][2];
         TH2D*                   fHist2DPsiCCent[fnRunMax][2];
