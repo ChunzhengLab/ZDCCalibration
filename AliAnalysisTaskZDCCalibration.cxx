@@ -522,37 +522,6 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       }
     }
 
-    if(bFillQAHist) {
-      QxC /= MC;
-      QyC /= MC;
-      QxA /= MA;
-      QyA /= MA;
-
-      fProfileQxCCent[runNumBin][0]->Fill(fCentrality,QxC);
-      fProfileQyCCent[runNumBin][0]->Fill(fCentrality,QyC);
-      fProfileQxACent[runNumBin][0]->Fill(fCentrality,QxA);
-      fProfileQyACent[runNumBin][0]->Fill(fCentrality,QyA);
-      fProfileQxAQxCCent[runNumBin][0]->Fill(fCentrality,QxA*QxC);
-      fProfileQxAQyCCent[runNumBin][0]->Fill(fCentrality,QxA*QyC);
-      fProfileQyAQxCCent[runNumBin][0]->Fill(fCentrality,QyA*QxC);
-      fProfileQyAQyCCent[runNumBin][0]->Fill(fCentrality,QyA*QyC);
-
-      fProfileQxCCentTot[0]->Fill(fCentrality,QxC);
-      fProfileQyCCentTot[0]->Fill(fCentrality,QyC);
-      fProfileQxACentTot[0]->Fill(fCentrality,QxA);
-      fProfileQyACentTot[0]->Fill(fCentrality,QyA);
-      fProfileQxAQxCCentTot[0]->Fill(fCentrality,QxA*QxC);
-      fProfileQxAQyCCentTot[0]->Fill(fCentrality,QxA*QyC);
-      fProfileQyAQxCCentTot[0]->Fill(fCentrality,QyA*QxC);
-      fProfileQyAQyCCentTot[0]->Fill(fCentrality,QyA*QyC);
-
-      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
-      double psiA = atan2(QyA,QxA)>0. ? atan2(QyA,QxA) : atan2(QyA,QxA)+TMath::TwoPi();
-
-      fHist2DPsiCCent[runNumBin][0]->Fill(fCentrality,psiC);
-      fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,psiA);
-    }
-
     //GetVexBin
     int vxBin = -1;
     int vyBin = -1;
@@ -599,6 +568,37 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHn4DQxZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,QxA);
       fHn4DQyZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,QyA);
       fHn4DMtZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,MA);
+    }
+
+    if(bFillQAHist) {
+      QxC /= MC;
+      QyC /= MC;
+      QxA /= MA;
+      QyA /= MA;
+
+      fProfileQxCCent[runNumBin][0]->Fill(fCentrality,QxC);
+      fProfileQyCCent[runNumBin][0]->Fill(fCentrality,QyC);
+      fProfileQxACent[runNumBin][0]->Fill(fCentrality,QxA);
+      fProfileQyACent[runNumBin][0]->Fill(fCentrality,QyA);
+      fProfileQxAQxCCent[runNumBin][0]->Fill(fCentrality,QxA*QxC);
+      fProfileQxAQyCCent[runNumBin][0]->Fill(fCentrality,QxA*QyC);
+      fProfileQyAQxCCent[runNumBin][0]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCent[runNumBin][0]->Fill(fCentrality,QyA*QyC);
+
+      fProfileQxCCentTot[0]->Fill(fCentrality,QxC);
+      fProfileQyCCentTot[0]->Fill(fCentrality,QyC);
+      fProfileQxACentTot[0]->Fill(fCentrality,QxA);
+      fProfileQyACentTot[0]->Fill(fCentrality,QyA);
+      fProfileQxAQxCCentTot[0]->Fill(fCentrality,QxA*QxC);
+      fProfileQxAQyCCentTot[0]->Fill(fCentrality,QxA*QyC);
+      fProfileQyAQxCCentTot[0]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCentTot[0]->Fill(fCentrality,QyA*QyC);
+
+      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+      double psiA = atan2(QyA,QxA)>0. ? atan2(QyA,QxA) : atan2(QyA,QxA)+TMath::TwoPi();
+
+      fHist2DPsiCCent[runNumBin][0]->Fill(fCentrality,psiC);
+      fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,psiA);
     }
 
     if(bApplyRC) {
