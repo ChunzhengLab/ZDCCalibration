@@ -481,15 +481,21 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     const double* EZNCRaw = fZDC->GetZNCTowerEnergy();
     const double* EZNARaw = fZDC->GetZNATowerEnergy();
 
-    double EZNC[5] = {0.,0.,0.,0.,0.}; 
-    double EZNA[5] = {0.,0.,0.,0.,0.};
-
     if(bFillHistForGE) {
       for (int iTower = 0; iTower < 5; ++iTower) {
         fProfileZNCTowerEnergy[runNumBin] -> Fill(iTower+0.5, EZNCRaw[iTower]);
         fProfileZNATowerEnergy[runNumBin] -> Fill(iTower+0.5, EZNARaw[iTower]);
       }
     }
+
+    double EZNC[5] = {0.,0.,0.,0.,0.}; 
+    double EZNA[5] = {0.,0.,0.,0.,0.};
+    double QxC = 0.;
+    double QyC = 0.;
+    double MC  = 0.;
+    double QxA = 0.;
+    double QyA = 0.;
+    double MA  = 0.;
 
     if(bApplyGE) {
       fProfileForZNCGE = (TProfile*)fZDCCalibrationListThisRun->FindObject("profileZNCTowerEnergy"); 
@@ -498,29 +504,23 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         EZNC[iTower] = EZNCRaw[iTower] / (fProfileForZNCGE->GetBinContent(iTower + 1)) * (fProfileForZNCGE->GetBinContent(2));//here to select the ref Tower
         EZNA[iTower] = EZNARaw[iTower] / (fProfileForZNAGE->GetBinContent(iTower + 1)) * (fProfileForZNAGE->GetBinContent(2));
       }
+
+      for (int iTower = 0; iTower < 4; ++iTower) {
+        QxC += EZNC[iTower + 1] * x[iTower];
+        QyC += EZNC[iTower + 1] * y[iTower];
+        MC  += EZNC[iTower + 1];
+        QxA += EZNA[iTower + 1] * x[iTower];
+        QyA += EZNA[iTower + 1] * y[iTower];
+        MA  += EZNA[iTower + 1];
+      }
+      if(MC < 1.e-6) return;
+      if(MA < 1.e-6) return;
+      //QA
       for (int iTower = 0; iTower < 5; ++iTower) {
         fProfileZNCTowerEnergyBfGE[runNumBin] -> Fill(iTower+0.5, EZNC[iTower]);
         fProfileZNATowerEnergyBfGE[runNumBin] -> Fill(iTower+0.5, EZNA[iTower]);
       }
     }
-    double QxC = 0.;
-    double QyC = 0.;
-    double MC  = 0.;
-    double QxA = 0.;
-    double QyA = 0.;
-    double MA  = 0.;
-
-    for (int iTower = 0; iTower < 4; ++iTower) {
-      QxC += EZNC[iTower + 1] * x[iTower];
-      QyC += EZNC[iTower + 1] * y[iTower];
-      MC  += EZNC[iTower + 1];
-      QxA += EZNA[iTower + 1] * x[iTower];
-      QyA += EZNA[iTower + 1] * y[iTower];
-      MA  += EZNA[iTower + 1];
-    }
-
-    if(MC < 1.e-6) return;
-    if(MA < 1.e-6) return;
 
     if(bFillQAHist) {
       QxC /= MC;
