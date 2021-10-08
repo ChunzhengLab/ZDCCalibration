@@ -630,12 +630,21 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         QyC -= QyCMean; 
         QxA -= QxAMean; 
         QyA -= QyAMean; 
-    
+
+        fProfileQxCCent[runNumBin][1]->Fill(fCentrality,QxC);
+        fProfileQyCCent[runNumBin][1]->Fill(fCentrality,QyC);
+        fProfileQxACent[runNumBin][1]->Fill(fCentrality,QxA);
+        fProfileQyACent[runNumBin][1]->Fill(fCentrality,QyA);
         fProfileQxAQxCCent[runNumBin][1]->Fill(fCentrality,QxA*QxC);
         fProfileQxAQyCCent[runNumBin][1]->Fill(fCentrality,QxA*QyC);
         fProfileQyAQxCCent[runNumBin][1]->Fill(fCentrality,QyA*QxC);
         fProfileQyAQyCCent[runNumBin][1]->Fill(fCentrality,QyA*QyC);
 
+
+        fProfileQxCCentTot[1]->Fill(fCentrality,QxC);
+        fProfileQyCCentTot[1]->Fill(fCentrality,QyC);
+        fProfileQxACentTot[1]->Fill(fCentrality,QxA);
+        fProfileQyACentTot[1]->Fill(fCentrality,QyA);
         fProfileQxAQxCCentTot[1]->Fill(fCentrality,QxA*QxC);
         fProfileQxAQyCCentTot[1]->Fill(fCentrality,QxA*QyC);
         fProfileQyAQxCCentTot[1]->Fill(fCentrality,QyA*QxC);
