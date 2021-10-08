@@ -244,7 +244,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
     fHistCent = new TH1D("fHistCent","Centrality", 100, 0., 100.);
     fHist2DCentCorr[0] = new TH2D("fHist2DCentCorrBfCut","Centrality(before Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
     fHist2DCentCorr[1] = new TH2D("fHist2DCentCorrAfCut","Centrality(after Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
-    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",200,-0.1,0.1,300,0,0.3);
+    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",200,-0.1,0.1,300,0.,0.3);
     fHistVzTot = new TH1D("fHistVzTot","Vz (all run)",200,-20,20);
 
     fOutputList -> Add(fHistCent);
@@ -315,7 +315,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       fRunList[iRun] -> SetOwner(kTRUE);
       fRunList[iRun] -> SetName(Form("%i", runNumList[iRun]));
 
-      fHist2DVxVy[iRun] = new TH2D("hist2DVxVy","hist2DVxVy",200,-0.1,0.1,300,0,0.3);
+      fHist2DVxVy[iRun] = new TH2D("hist2DVxVy","hist2DVxVy",200,-0.1,0.1,300,0.,0.3);
       fHistVz[iRun] = new TH1D("histVz","histVz",200,-20,20);
       fRunList[iRun] -> Add(fHist2DVxVy[iRun]);
       fRunList[iRun] -> Add(fHistVz[iRun]);
@@ -411,10 +411,10 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fQAListThisRun[iRun]->Add(fProfileQyAQxCCent[iRun][1]);
         fQAListThisRun[iRun]->Add(fProfileQyAQyCCent[iRun][1]);
 
-        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentBfRC",Form("Hist2D Cent vs. PsiA before Recentering Run%d",runNumList[iRun]),20,0.,100.,180,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentBfRC",Form("Hist2D Cent vs. PsiC before Recentering Run%d",runNumList[iRun]),20,0.,100.,180,0.,TMath::TwoPi());
-        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentAfRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),20,0.,100.,180,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentAfRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),20,0.,100.,180,0.,TMath::TwoPi());
+        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentBfRC",Form("Hist2D Cent vs. PsiA before Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentBfRC",Form("Hist2D Cent vs. PsiC before Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentAfRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentAfRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
       
         fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][0]);
         fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][0]);
