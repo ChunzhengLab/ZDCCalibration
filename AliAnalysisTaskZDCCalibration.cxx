@@ -74,7 +74,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fHn4DForZNCMtRC(nullptr)
 {
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
-    for (size_t i = 0; i < 3; i++) {fHist2DCentCorr[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
     {
       fProfileQxCCentTot[i] = nullptr;
@@ -158,7 +158,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fHn4DForZNCMtRC(nullptr)
 {
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
-    for (size_t i = 0; i < 3; i++) {fHist2DCentCorr[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
     {
       fProfileQxCCentTot[i] = nullptr;
