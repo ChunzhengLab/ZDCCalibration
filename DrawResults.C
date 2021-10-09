@@ -163,6 +163,25 @@ void DrawResults() {
 
 
   TCanvas* cQQ = new TCanvas("","",1000,800);
+  pQxAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
+  pQxAQxCCentThisRun[0]->SetLineColor(ci[0]);
+  pQxAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
+  pQxAQxCCentThisRun[1]->SetLineColor(ci[1]);
+
+  pQxAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
+  pQxAQyCCentThisRun[0]->SetLineColor(ci[0]);
+  pQxAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
+  pQxAQyCCentThisRun[1]->SetLineColor(ci[1]);
+
+  pQyAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
+  pQyAQxCCentThisRun[0]->SetLineColor(ci[0]);
+  pQyAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
+  pQyAQxCCentThisRun[1]->SetLineColor(ci[1]);
+
+  pQyAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
+  pQyAQyCCentThisRun[0]->SetLineColor(ci[0]);
+  pQyAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
+  pQyAQyCCentThisRun[1]->SetLineColor(ci[1]);
   cQQ->Divide(2,2);
   cQQ->cd(1);
   pQxAQxCCentThisRun[0]->Draw("SAME");
@@ -187,27 +206,6 @@ void DrawResults() {
   pQyAQxCCentThisRun[1]->Rebin(2);
   pQyAQyCCentThisRun[0]->Rebin(2);
   pQyAQyCCentThisRun[1]->Rebin(2);
-
-  pQxAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQxAQxCCentThisRun[0]->SetLineColor(ci[0]);
-  pQxAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQxAQxCCentThisRun[1]->SetLineColor(ci[1]);
-
-  pQxAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQxAQyCCentThisRun[0]->SetLineColor(ci[0]);
-  pQxAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQxAQyCCentThisRun[1]->SetLineColor(ci[1]);
-
-  pQyAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQyAQxCCentThisRun[0]->SetLineColor(ci[0]);
-  pQyAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQyAQxCCentThisRun[1]->SetLineColor(ci[1]);
-
-  pQyAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQyAQyCCentThisRun[0]->SetLineColor(ci[0]);
-  pQyAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQyAQyCCentThisRun[1]->SetLineColor(ci[1]);
-
 
   pQxAQxCCentThisRun[0]->Draw("SAME");
   pQxAQxCCentThisRun[1]->Draw("SAME");
