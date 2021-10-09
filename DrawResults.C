@@ -3,6 +3,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TCanvas.h"
+#include "TColor.h"
 
 void DrawResults() {
   TFile* inputFile = TFile::Open("AnalysisResults.root");

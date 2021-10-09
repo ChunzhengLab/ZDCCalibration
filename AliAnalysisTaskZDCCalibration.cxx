@@ -332,8 +332,8 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       {
         fProfileForZNAGE = new TProfile();
         fProfileForZNAGE = new TProfile();
-        fProfileZNCTowerEnergyBfGE[iRun] = new TProfile("profileZNCTowerEnergyBfGE","ProfileZNCTowerEnergyBfGE",5,0,5);
-        fProfileZNATowerEnergyBfGE[iRun] = new TProfile("profileZNATowerEnergyBfGE","ProfileZNATowerEnergyBfGE",5,0,5);
+        fProfileZNCTowerEnergyBfGE[iRun] = new TProfile("profileZNCTowerEnergyAfGE","ProfileZNCTowerEnergyAfGE",5,0,5);
+        fProfileZNATowerEnergyBfGE[iRun] = new TProfile("profileZNATowerEnergyAfGE","ProfileZNATowerEnergyAfGE",5,0,5);
         fRunList[iRun] -> Add(fProfileZNCTowerEnergyBfGE[iRun]);
         fRunList[iRun] -> Add(fProfileZNATowerEnergyBfGE[iRun]);
       }
