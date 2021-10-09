@@ -1,6 +1,5 @@
 # ZDCCalibration
 
-为什么如此的难顶
-
-精细化了顶点的分bin
-需要检查经过了GE之后的Tower能量值，需要检查Vtx维度不同bin内的Q值，需要更换ref Tower查看各项的变化
+Step1 填充顶点信息，填充ZDC各个Tower的能量均值
+Step2 修正通道增益，以(centrality,vx,vy,vz)分bin求平均Q值
+Step3 以(centrality,vx,vy,vz)中心化Q值，计算平面
