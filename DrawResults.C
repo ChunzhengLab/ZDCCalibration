@@ -175,7 +175,15 @@ void DrawResults() {
   cQ->SaveAs("plots/Q.png");
 
 
-  TCanvas* cQQ = new TCanvas("","",1000,800);
+  TCanvas* cQQTot = new TCanvas("","",1000,800);
+  pQxAQxCCentTot[0]->Rebin(4);
+  pQxAQxCCentTot[1]->Rebin(4);
+  pQxAQyCCentTot[0]->Rebin(4);
+  pQxAQyCCentTot[1]->Rebin(4);
+  pQyAQxCCentTot[0]->Rebin(4);
+  pQyAQxCCentTot[1]->Rebin(4);
+  pQyAQyCCentTot[0]->Rebin(4);
+  pQyAQyCCentTot[1]->Rebin(4);
   pQxAQxCCentTot[0]->SetMarkerColor(ci[0]);
   pQxAQxCCentTot[0]->SetLineColor(ci[0]);
   pQxAQxCCentTot[0]->SetMarkerStyle(kOpenSquare);
@@ -205,7 +213,26 @@ void DrawResults() {
   pQyAQyCCentTot[1]->SetMarkerColor(ci[3]);
   pQyAQyCCentTot[1]->SetLineColor(ci[3]);
   pQyAQyCCentTot[1]->SetMarkerStyle(kFullSquare);
+  for(int i = 0; i<2; i++) pQxAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQxAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQyAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQyAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
 
+  pQxAQxCCentTot[0]->Draw("SAME");
+  pQxAQxCCentTot[1]->Draw("SAME");
+
+  pQxAQyCCentTot[0]->Draw("SAME");
+  pQxAQyCCentTot[1]->Draw("SAME");
+
+  pQyAQxCCentTot[0]->Draw("SAME");
+  pQyAQxCCentTot[1]->Draw("SAME");
+
+  pQyAQyCCentTot[0]->Draw("SAME");
+  pQyAQyCCentTot[1]->Draw("SAME");
+
+  cQQTot->SaveAs("plots/QQTot.png");
+
+  TCanvas* cQQ = new TCanvas("","",1000,800);
   cQQ->Divide(2,2);
   cQQ->cd(1);
   pQxAQxCCentTot[0]->Draw("SAME");
@@ -220,34 +247,6 @@ void DrawResults() {
   pQyAQyCCentTot[0]->Draw("SAME");
   pQyAQyCCentTot[1]->Draw("SAME");
   cQQ->SaveAs("plots/QQ.png");
-
-  TCanvas* cQQTot = new TCanvas("","",1000,800);
-  pQxAQxCCentTot[0]->Rebin(4);
-  pQxAQxCCentTot[1]->Rebin(4);
-  pQxAQyCCentTot[0]->Rebin(4);
-  pQxAQyCCentTot[1]->Rebin(4);
-  pQyAQxCCentTot[0]->Rebin(4);
-  pQyAQxCCentTot[1]->Rebin(4);
-  pQyAQyCCentTot[0]->Rebin(4);
-  pQyAQyCCentTot[1]->Rebin(4);
-
-  pQxAQxCCentTot[0]->Draw("SAME");
-  pQxAQxCCentTot[1]->Draw("SAME");
-
-  pQxAQyCCentTot[0]->Draw("SAME");
-  pQxAQyCCentTot[1]->Draw("SAME");
-
-  pQyAQxCCentTot[0]->Draw("SAME");
-  pQyAQxCCentTot[1]->Draw("SAME");
-
-  pQyAQyCCentTot[0]->Draw("SAME");
-  pQyAQyCCentTot[1]->Draw("SAME");
-  cQQTot->SaveAs("plots/QQTot.png");
-
-  for(int i = 0; i<2; i++) pQxAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
-  for(int i = 0; i<2; i++) pQxAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
-  for(int i = 0; i<2; i++) pQyAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
-  for(int i = 0; i<2; i++) pQyAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
 
   TCanvas* cPlanelego = new TCanvas("","",1000,800);
   cPlanelego->Divide(2,2);
