@@ -16,29 +16,41 @@ void DrawResults() {
   TH2D* hCentCorrAfCut = (TH2D*)listTot->FindObject("fHist2DCentCorrAfCut");
   TH2D* hVxVy = (TH2D*)listTot->FindObject("fHist2DVxVyTot");
   TH1D* hVz = (TH1D*)listTot->FindObject("fHistVzTot");
-  TList* listThisRun = (TList*)listTot->FindObject("139510");
+  TList* listQATot = (TList*)listTot->FindObject("QA Total");
 
+  TProfile* pQxAQxCCentTot[2];
+  TProfile* pQxAQyCCentTot[2];
+  TProfile* pQyAQxCCentTot[2];
+  TProfile* pQyAQyCCentTot[2];
+  for(int i = 0; i<2; i++) pQxAQxCCentTot[i] = nullptr;
+  for(int i = 0; i<2; i++) pQxAQyCCentTot[i] = nullptr;
+  for(int i = 0; i<2; i++) pQyAQxCCentTot[i] = nullptr;
+  for(int i = 0; i<2; i++) pQyAQyCCentTot[i] = nullptr;
+  pQxAQxCCentTot[0] = (TProfile*)listQATot->FindObject("fProfileQxAQxCCentTotBfRC");
+  pQxAQyCCentTot[0] = (TProfile*)listQATot->FindObject("fProfileQxAQyCCentTotBfRC");
+  pQyAQxCCentTot[0] = (TProfile*)listQATot->FindObject("fProfileQyAQxCCentTotBfRC");
+  pQyAQyCCentTot[0] = (TProfile*)listQATot->FindObject("fProfileQyAQyCCentTotBfRC");
+  pQxAQxCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQxAQxCCentTotAfRC");
+  pQxAQyCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQxAQyCCentTotAfRC");
+  pQyAQxCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQyAQxCCentTotAfRC");
+  pQyAQyCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQyAQyCCentTotAfRC");
+
+  TList* listThisRun = (TList*)listTot->FindObject("137231");
   TProfile* pZNCTowerEnergyThisRun[2];
   TProfile* pZNATowerEnergyThisRun[2];
-
   for(int i = 0; i<2; i++) pZNCTowerEnergyThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pZNATowerEnergyThisRun[i] = nullptr;
-
   pZNCTowerEnergyThisRun[0] = (TProfile*)listThisRun->FindObject("profileZNCTowerEnergy");
   pZNATowerEnergyThisRun[0] = (TProfile*)listThisRun->FindObject("profileZNATowerEnergy");
-  pZNCTowerEnergyThisRun[1] = (TProfile*)listThisRun->FindObject("profileZNCTowerEnergyBfGE");
-  pZNATowerEnergyThisRun[1] = (TProfile*)listThisRun->FindObject("profileZNATowerEnergyBfGE");
+  pZNCTowerEnergyThisRun[1] = (TProfile*)listThisRun->FindObject("profileZNCTowerEnergyAfGE");
+  pZNATowerEnergyThisRun[1] = (TProfile*)listThisRun->FindObject("profileZNATowerEnergyAfGE");
 
-  
+
   TList* QAThisRun = (TList*)listThisRun->FindObject("QA");
   TProfile* pQxCCentThisRun[2];
   TProfile* pQyCCentThisRun[2];
   TProfile* pQxACentThisRun[2];
   TProfile* pQyACentThisRun[2];
-  TProfile* pQxAQxCCentThisRun[2];
-  TProfile* pQxAQyCCentThisRun[2];
-  TProfile* pQyAQxCCentThisRun[2];
-  TProfile* pQyAQyCCentThisRun[2];
   TH2D*     hPsiACentThisRun[2];
   TH2D*     hPsiCCentThisRun[2];
 
@@ -46,10 +58,6 @@ void DrawResults() {
   for(int i = 0; i<2; i++) pQyCCentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pQxACentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pQyACentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) pQxAQxCCentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) pQxAQyCCentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) pQyAQxCCentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) pQyAQyCCentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) hPsiACentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) hPsiCCentThisRun[i] = nullptr;
 
@@ -58,10 +66,6 @@ void DrawResults() {
   pQxACentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQxACentBfRC");
   pQyACentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQyACentBfRC");
 
-  pQxAQxCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQxAQxCCentBfRCThisRun");
-  pQxAQyCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQxAQyCCentBfRCThisRun");
-  pQyAQxCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQyAQxCCentBfRCThisRun");
-  pQyAQyCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQyAQyCCentBfRCThisRun");
   hPsiACentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentBfRC");
   hPsiCCentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentBfRC");
 
@@ -70,12 +74,20 @@ void DrawResults() {
   pQxACentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQxACentAfRC");
   pQyACentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQyACentAfRC");
 
-  pQxAQxCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQxAQxCCentAfRCThisRun");
-  pQxAQyCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQxAQyCCentAfRCThisRun");
-  pQyAQxCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQyAQxCCentAfRCThisRun");
-  pQyAQyCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQyAQyCCentAfRCThisRun");
   hPsiACentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentAfRC");
   hPsiCCentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentAfRC");
+
+  TH1D* hPsiACent[2][10];
+  TH1D* hPsiCCent[2][10];
+  for(int i = 0; i<2; i++) for (int iCent = 0; iCent < 10; iCent++) {hPsiACent[i][iCent] = nullptr; hPsiCCent[i][iCent] = nullptr;}
+  for (int i = 0; i < 2; i++) {
+  for (int iCent = 0; iCent < 10; iCent++) {      
+      hPsiACent[i][iCent] = (TH1D*)hPsiACentThisRun[i]->ProjectionY(Form("PsiAcent%d_%d",iCent,i),iCent+1,iCent+1);
+      hPsiCCent[i][iCent] = (TH1D*)hPsiCCentThisRun[i]->ProjectionY(Form("PsiCcent%d_%d",iCent,i),iCent+1,iCent+1);
+      hPsiACent[i][iCent]->GetYaxis()->SetRangeUser(0,450);
+      hPsiCCent[i][iCent]->GetYaxis()->SetRangeUser(0,450);
+    }
+  }
 
   int ci[4];
   TColor* color[4];
@@ -106,13 +118,13 @@ void DrawResults() {
   pZNCTowerEnergyThisRun[0]->Draw();
   pZNCTowerEnergyThisRun[0]->SetMarkerColor(ci[0]);
   pZNCTowerEnergyThisRun[0]->SetLineColor(ci[0]);
-  pZNCTowerEnergyThisRun[0]->SetLineStyle(9);
+  pZNCTowerEnergyThisRun[0]->SetLineStyle(6);
   pZNCTowerEnergyThisRun[0]->SetLineWidth(2);
   cGE->cd(2);
   pZNATowerEnergyThisRun[0]->Draw();
   pZNATowerEnergyThisRun[0]->SetMarkerColor(ci[1]);
   pZNATowerEnergyThisRun[0]->SetLineColor(ci[1]);
-  pZNATowerEnergyThisRun[0]->SetLineStyle(9);
+  pZNATowerEnergyThisRun[0]->SetLineStyle(6);
   pZNATowerEnergyThisRun[0]->SetLineWidth(2);
 
   cGE->cd(3);
@@ -164,62 +176,78 @@ void DrawResults() {
 
 
   TCanvas* cQQ = new TCanvas("","",1000,800);
-  pQxAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQxAQxCCentThisRun[0]->SetLineColor(ci[0]);
-  pQxAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQxAQxCCentThisRun[1]->SetLineColor(ci[1]);
+  pQxAQxCCentTot[0]->SetMarkerColor(ci[0]);
+  pQxAQxCCentTot[0]->SetLineColor(ci[0]);
+  pQxAQxCCentTot[0]->SetMarkerStyle(kOpenSquare);
+  pQxAQxCCentTot[1]->SetMarkerColor(ci[0]);
+  pQxAQxCCentTot[1]->SetLineColor(ci[0]);
+  pQxAQxCCentTot[1]->SetMarkerStyle(kFullSquare);
 
-  pQxAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQxAQyCCentThisRun[0]->SetLineColor(ci[0]);
-  pQxAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQxAQyCCentThisRun[1]->SetLineColor(ci[1]);
+  pQxAQyCCentTot[0]->SetMarkerColor(ci[1]);
+  pQxAQyCCentTot[0]->SetLineColor(ci[1]);
+  pQxAQyCCentTot[0]->SetMarkerStyle(kOpenSquare);
+  pQxAQyCCentTot[1]->SetMarkerColor(ci[1]);
+  pQxAQyCCentTot[1]->SetLineColor(ci[1]);
+  pQxAQyCCentTot[1]->SetMarkerStyle(kFullSquare);
 
-  pQyAQxCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQyAQxCCentThisRun[0]->SetLineColor(ci[0]);
-  pQyAQxCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQyAQxCCentThisRun[1]->SetLineColor(ci[1]);
 
-  pQyAQyCCentThisRun[0]->SetMarkerColor(ci[0]);
-  pQyAQyCCentThisRun[0]->SetLineColor(ci[0]);
-  pQyAQyCCentThisRun[1]->SetMarkerColor(ci[1]);
-  pQyAQyCCentThisRun[1]->SetLineColor(ci[1]);
+  pQyAQxCCentTot[0]->SetMarkerColor(ci[2]);
+  pQyAQxCCentTot[0]->SetLineColor(ci[2]);
+  pQyAQxCCentTot[0]->SetMarkerStyle(kOpenSquare);
+  pQyAQxCCentTot[1]->SetMarkerColor(ci[2]);
+  pQyAQxCCentTot[1]->SetLineColor(ci[2]);
+  pQyAQxCCentTot[1]->SetMarkerStyle(kFullSquare);
+
+
+  pQyAQyCCentTot[0]->SetMarkerColor(ci[3]);
+  pQyAQyCCentTot[0]->SetLineColor(ci[3]);
+  pQyAQyCCentTot[0]->SetMarkerStyle(kOpenSquare);
+  pQyAQyCCentTot[1]->SetMarkerColor(ci[3]);
+  pQyAQyCCentTot[1]->SetLineColor(ci[3]);
+  pQyAQyCCentTot[1]->SetMarkerStyle(kFullSquare);
+
   cQQ->Divide(2,2);
   cQQ->cd(1);
-  pQxAQxCCentThisRun[0]->Draw("SAME");
-  pQxAQxCCentThisRun[1]->Draw("SAME");
+  pQxAQxCCentTot[0]->Draw("SAME");
+  pQxAQxCCentTot[1]->Draw("SAME");
   cQQ->cd(2);
-  pQxAQyCCentThisRun[0]->Draw("SAME");
-  pQxAQyCCentThisRun[1]->Draw("SAME");
+  pQxAQyCCentTot[0]->Draw("SAME");
+  pQxAQyCCentTot[1]->Draw("SAME");
   cQQ->cd(3);
-  pQyAQxCCentThisRun[0]->Draw("SAME");
-  pQyAQxCCentThisRun[1]->Draw("SAME");
+  pQyAQxCCentTot[0]->Draw("SAME");
+  pQyAQxCCentTot[1]->Draw("SAME");
   cQQ->cd(4);
-  pQyAQyCCentThisRun[0]->Draw("SAME");
-  pQyAQyCCentThisRun[1]->Draw("SAME");
+  pQyAQyCCentTot[0]->Draw("SAME");
+  pQyAQyCCentTot[1]->Draw("SAME");
   cQQ->SaveAs("plots/QQ.png");
 
   TCanvas* cQQTot = new TCanvas("","",1000,800);
-  pQxAQxCCentThisRun[0]->Rebin(2);
-  pQxAQxCCentThisRun[1]->Rebin(2);
-  pQxAQyCCentThisRun[0]->Rebin(2);
-  pQxAQyCCentThisRun[1]->Rebin(2);
-  pQyAQxCCentThisRun[0]->Rebin(2);
-  pQyAQxCCentThisRun[1]->Rebin(2);
-  pQyAQyCCentThisRun[0]->Rebin(2);
-  pQyAQyCCentThisRun[1]->Rebin(2);
+  pQxAQxCCentTot[0]->Rebin(4);
+  pQxAQxCCentTot[1]->Rebin(4);
+  pQxAQyCCentTot[0]->Rebin(4);
+  pQxAQyCCentTot[1]->Rebin(4);
+  pQyAQxCCentTot[0]->Rebin(4);
+  pQyAQxCCentTot[1]->Rebin(4);
+  pQyAQyCCentTot[0]->Rebin(4);
+  pQyAQyCCentTot[1]->Rebin(4);
 
-  pQxAQxCCentThisRun[0]->Draw("SAME");
-  pQxAQxCCentThisRun[1]->Draw("SAME");
+  pQxAQxCCentTot[0]->Draw("SAME");
+  pQxAQxCCentTot[1]->Draw("SAME");
 
-  pQxAQyCCentThisRun[0]->Draw("SAME");
-  pQxAQyCCentThisRun[1]->Draw("SAME");
+  pQxAQyCCentTot[0]->Draw("SAME");
+  pQxAQyCCentTot[1]->Draw("SAME");
 
-  pQyAQxCCentThisRun[0]->Draw("SAME");
-  pQyAQxCCentThisRun[1]->Draw("SAME");
+  pQyAQxCCentTot[0]->Draw("SAME");
+  pQyAQxCCentTot[1]->Draw("SAME");
 
-  pQyAQyCCentThisRun[0]->Draw("SAME");
-  pQyAQyCCentThisRun[1]->Draw("SAME");
+  pQyAQyCCentTot[0]->Draw("SAME");
+  pQyAQyCCentTot[1]->Draw("SAME");
   cQQTot->SaveAs("plots/QQTot.png");
+
+  for(int i = 0; i<2; i++) pQxAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQxAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQyAQxCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
+  for(int i = 0; i<2; i++) pQyAQyCCentTot[i] ->GetYaxis()->SetRangeUser(-0.025,0.025);
 
   TCanvas* cPlanelego = new TCanvas("","",1000,800);
   cPlanelego->Divide(2,2);
@@ -244,4 +272,40 @@ void DrawResults() {
   cPlane->cd(4);
   hPsiACentThisRun[1]->Draw("cont4");
   cPlane->SaveAs("plots/Plane.png");
+
+  TCanvas* cPlaneCCentBf = new TCanvas("","",1000,800);
+  cPlaneCCentBf->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneCCentBf->cd(i+1);
+    hPsiCCent[0][i]->Draw();
+  }
+  cPlaneCCentBf->SaveAs("plots/PlaneCBf.png");
+
+  TCanvas* cPlaneCCentAf = new TCanvas("","",1000,800);
+  cPlaneCCentAf->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneCCentAf->cd(i+1);
+    hPsiCCent[1][i]->Draw();
+  }
+  cPlaneCCentAf->SaveAs("plots/PlaneCAf.png");
+
+  TCanvas* cPlaneACentBf = new TCanvas("","",1000,800);
+  cPlaneACentBf->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneACentBf->cd(i+1);
+    hPsiACent[0][i]->Draw();
+  }
+  cPlaneACentBf->SaveAs("plots/PlaneABf.png");
+
+  TCanvas* cPlaneACentAf = new TCanvas("","",1000,800);
+  cPlaneACentAf->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneACentAf->cd(i+1);
+    hPsiACent[1][i]->Draw();
+  }
+  cPlaneACentAf->SaveAs("plots/PlaneAAf.png");
 }
