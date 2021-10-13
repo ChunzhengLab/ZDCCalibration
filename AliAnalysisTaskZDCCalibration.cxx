@@ -171,12 +171,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fProfileForZNCGE(nullptr),
     fProfileForZNAGE(nullptr),
 
-    fHn4DForZNAQxRC(nullptr),
-    fHn4DForZNAQyRC(nullptr),
-    fHn4DForZNAMtRC(nullptr),
     fHn4DForZNCQxRC(nullptr),
     fHn4DForZNCQyRC(nullptr),
     fHn4DForZNCMtRC(nullptr),
+    fHn4DForZNAQxRC(nullptr),
+    fHn4DForZNAQyRC(nullptr),
+    fHn4DForZNAMtRC(nullptr),
 
     fProfile2DForCosC(nullptr),
     fProfile2DForSinC(nullptr),
