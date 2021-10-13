@@ -57,14 +57,14 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TH2D*                   fHist2DVxVyTot;
         TH1D*                   fHistVzTot;
 
-        TProfile*               fProfileQxCCentTot[3];
-        TProfile*               fProfileQyCCentTot[3];
-        TProfile*               fProfileQxACentTot[3];
-        TProfile*               fProfileQyACentTot[3];
-        TProfile*               fProfileQxAQxCCentTot[3];
-        TProfile*               fProfileQxAQyCCentTot[3];
-        TProfile*               fProfileQyAQxCCentTot[3];
-        TProfile*               fProfileQyAQyCCentTot[3];
+        TProfile*               fProfileQxCCentTot[2];
+        TProfile*               fProfileQyCCentTot[2];
+        TProfile*               fProfileQxACentTot[2];
+        TProfile*               fProfileQyACentTot[2];
+        TProfile*               fProfileQxAQxCCentTot[2];
+        TProfile*               fProfileQxAQyCCentTot[2];
+        TProfile*               fProfileQyAQxCCentTot[2];
+        TProfile*               fProfileQyAQyCCentTot[2];
 
         TH2D*                   fHist2DPsiCCentTot[3];
         TH2D*                   fHist2DPsiACentTot[3];
@@ -121,14 +121,14 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile2D*              fProfile2DForSinA;
 
         //Corr
-        TProfile*                fProfileQxCCent[fnRunMax][3];
-        TProfile*                fProfileQyCCent[fnRunMax][3];
-        TProfile*                fProfileQxACent[fnRunMax][3];
-        TProfile*                fProfileQyACent[fnRunMax][3];
-        TProfile*                fProfileQxAQxCCent[fnRunMax][3];
-        TProfile*                fProfileQxAQyCCent[fnRunMax][3];
-        TProfile*                fProfileQyAQxCCent[fnRunMax][3];
-        TProfile*                fProfileQyAQyCCent[fnRunMax][3];
+        TProfile*                fProfileQxCCent[fnRunMax][2];
+        TProfile*                fProfileQyCCent[fnRunMax][2];
+        TProfile*                fProfileQxACent[fnRunMax][2];
+        TProfile*                fProfileQyACent[fnRunMax][2];
+        TProfile*                fProfileQxAQxCCent[fnRunMax][2];
+        TProfile*                fProfileQxAQyCCent[fnRunMax][2];
+        TProfile*                fProfileQyAQxCCent[fnRunMax][2];
+        TProfile*                fProfileQyAQyCCent[fnRunMax][2];
 
         //Psi
         TH2D*                    fHist2DPsiCCent[fnRunMax][3];
