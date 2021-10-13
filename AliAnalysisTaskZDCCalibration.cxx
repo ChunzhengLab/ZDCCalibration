@@ -19,11 +19,13 @@
  * as an example, one histogram is filled
  */
 
+#include <iostream>
 #include "TChain.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TProfile.h"
+#include "TProfile2D.h"
 #include "THnSparse.h"
 #include "TList.h"
 #include "AliAnalysisTask.h"
@@ -32,7 +34,6 @@
 #include "AliAODInputHandler.h"
 #include "AliAnalysisUtils.h"
 #include "AliAnalysisTaskZDCCalibration.h"
-#include <iostream>
 
 class AliAnalysisTaskZDCCalibration;    // your analysis class
 
@@ -44,8 +45,10 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
+    bFillHistForSF(kFALSE),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
+    bApplySF(kFALSE),
     bFillQAHist(kFALSE),
 
     fZDCCalibrationList(nullptr),
@@ -71,7 +74,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fHn4DForZNAMtRC(nullptr),
     fHn4DForZNCQxRC(nullptr),
     fHn4DForZNCQyRC(nullptr),
-    fHn4DForZNCMtRC(nullptr)
+    fHn4DForZNCMtRC(nullptr),
+
+    fProfile2DForCosC(nullptr),
+    fProfile2DForSinC(nullptr),
+    fProfile2DForCosA(nullptr),
+    fProfile2DForSinA(nullptr)
 {
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
     for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
@@ -85,6 +93,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       fProfileQxAQyCCentTot[i] = nullptr;
       fProfileQyAQxCCentTot[i] = nullptr;
       fProfileQyAQyCCentTot[i] = nullptr;
+    }
+
+    for (size_t i = 0; i < 3; i++)
+    {
+      fHist2DPsiACentTot[i] = nullptr;
+      fHist2DPsiCCentTot[i] = nullptr;
     }
 
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
@@ -105,8 +119,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       fHn4DQxZNACentVxVySigmaVz[iRun] = nullptr;
       fHn4DQyZNACentVxVySigmaVz[iRun] = nullptr;
       fHn4DMtZNACentVxVySigmaVz[iRun] = nullptr;
-        
-      for (size_t i = 0; i < 2; i++)
+
+      fProfile2DShiftCentiCosC[iRun] = nullptr;
+      fProfile2DShiftCentiSinC[iRun] = nullptr;
+      fProfile2DShiftCentiCosA[iRun] = nullptr;
+      fProfile2DShiftCentiSinA[iRun] = nullptr;
+
+      for (size_t i = 0; i < 3; i++)
       {
         fProfileQxCCent[iRun][i] = nullptr;
         fProfileQyCCent[iRun][i] = nullptr;
@@ -128,8 +147,10 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
+    bFillHistForSF(kFALSE),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
+    bApplySF(kFALSE),
     bFillQAHist(kFALSE),
 
     fZDCCalibrationList(nullptr),
@@ -155,7 +176,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fHn4DForZNAMtRC(nullptr),
     fHn4DForZNCQxRC(nullptr),
     fHn4DForZNCQyRC(nullptr),
-    fHn4DForZNCMtRC(nullptr)
+    fHn4DForZNCMtRC(nullptr),
+
+    fProfile2DForCosC(nullptr),
+    fProfile2DForSinC(nullptr),
+    fProfile2DForCosA(nullptr),
+    fProfile2DForSinA(nullptr)
 {
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
     for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
@@ -172,6 +198,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfileQyAQyCCentTot[i] = nullptr;
     }
 
+    for (size_t i = 0; i < 3; i++)
+    {
+      fHist2DPsiACentTot[i] = nullptr;
+      fHist2DPsiCCentTot[i] = nullptr;
+    }
+    
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
@@ -190,8 +222,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fHn4DQxZNACentVxVySigmaVz[iRun] = nullptr;
       fHn4DQyZNACentVxVySigmaVz[iRun] = nullptr;
       fHn4DMtZNACentVxVySigmaVz[iRun] = nullptr;
+
+      fProfile2DShiftCentiCosC[iRun] = nullptr;
+      fProfile2DShiftCentiSinC[iRun] = nullptr;
+      fProfile2DShiftCentiCosA[iRun] = nullptr;
+      fProfile2DShiftCentiSinA[iRun] = nullptr;
         
-      for (size_t i = 0; i < 2; i++)
+      for (size_t i = 0; i < 3; i++)
       {
 
         fProfileQxCCent[iRun][i] = nullptr;
@@ -294,6 +331,20 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       fQAList -> Add(fProfileQyAQxCCentTot[1]);
       fQAList -> Add(fProfileQyAQyCCentTot[1]);
 
+      fHist2DPsiCCentTot[0] = new TH2D("fHist2DPsiCCentGE","Hist2D Cent vs. PsiC after Gain Equalization",10,0.,100.,180,0.,TMath::TwoPi());
+      fHist2DPsiACentTot[0] = new TH2D("fHist2DPsiACentGE","Hist2D Cent vs. PsiA after Gain Equalization",10,0.,100.,180,0.,TMath::TwoPi());
+      fHist2DPsiCCentTot[1] = new TH2D("fHist2DPsiCCentRC","Hist2D Cent vs. PsiC after Recentering",10,0.,100.,180,0.,TMath::TwoPi());
+      fHist2DPsiACentTot[1] = new TH2D("fHist2DPsiACentRC","Hist2D Cent vs. PsiA after Recentering",10,0.,100.,180,0.,TMath::TwoPi());
+      fHist2DPsiCCentTot[2] = new TH2D("fHist2DPsiCCentSF","Hist2D Cent vs. PsiC after Shifting",10,0.,100.,180,0.,TMath::TwoPi());
+      fHist2DPsiACentTot[2] = new TH2D("fHist2DPsiACentSF","Hist2D Cent vs. PsiA after Shifting",10,0.,100.,180,0.,TMath::TwoPi());
+
+      fQAList -> Add(fHist2DPsiCCentTot[0]);
+      fQAList -> Add(fHist2DPsiACentTot[0]);
+      fQAList -> Add(fHist2DPsiCCentTot[1]);
+      fQAList -> Add(fHist2DPsiACentTot[1]);
+      fQAList -> Add(fHist2DPsiCCentTot[2]);
+      fQAList -> Add(fHist2DPsiACentTot[2]);
+
       fOutputList->Add(fQAList);
     }
 
@@ -368,6 +419,23 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fHn4DForZNCQyRC = new THnSparseD();
         fHn4DForZNCMtRC = new THnSparseD();
       }
+
+      if (bFillHistForSF)
+      {
+        fProfile2DShiftCentiCosC[iRun] = new TProfile2D("fProfile2DShiftCentiCosC","fProfile2DShiftCentiCosC",10,0.,100.,20,0.,20.);
+        fProfile2DShiftCentiSinC[iRun] = new TProfile2D("fProfile2DShiftCentiSinC","fProfile2DShiftCentiSinC",10,0.,100.,20,0.,20.);
+        fProfile2DShiftCentiCosA[iRun] = new TProfile2D("fProfile2DShiftCentiCosA","fProfile2DShiftCentiCosA",10,0.,100.,20,0.,20.);
+        fProfile2DShiftCentiSinA[iRun] = new TProfile2D("fProfile2DShiftCentiSinA","fProfile2DShiftCentiSinA",10,0.,100.,20,0.,20.);
+      }
+
+      if (bApplySF)
+      {
+        fProfile2DForCosC = new TProfile2D();
+        fProfile2DForSinC = new TProfile2D();
+        fProfile2DForCosA = new TProfile2D();
+        fProfile2DForSinA = new TProfile2D();
+      }
+      
       
       if (bFillQAHist)
       {
@@ -411,15 +479,19 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fQAListThisRun[iRun]->Add(fProfileQyAQxCCent[iRun][1]);
         fQAListThisRun[iRun]->Add(fProfileQyAQyCCent[iRun][1]);
 
-        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentBfRC",Form("Hist2D Cent vs. PsiA before Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentBfRC",Form("Hist2D Cent vs. PsiC before Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentAfRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentAfRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-      
-        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][0]);
+        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentGE",Form("Hist2D Cent vs. PsiC after Gain Equalization Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentGE",Form("Hist2D Cent vs. PsiA after Gain Equalization Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiCCent[iRun][2] = new TH2D("fHist2DPsiCCentSF",Form("Hist2D Cent vs. PsiC after Shifting Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        fHist2DPsiACent[iRun][2] = new TH2D("fHist2DPsiACentSF",Form("Hist2D Cent vs. PsiA after Shifting Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+
         fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][0]);
-        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][0]);
         fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][1]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][2]);
+        fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][2]);
 
         fRunList[iRun]->Add(fQAListThisRun[iRun]);
       }
@@ -570,12 +642,12 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHn4DMtZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,MA);
     }
 
-    if(bFillQAHist) {
-      QxC /= MC;
-      QyC /= MC;
-      QxA /= MA;
-      QyA /= MA;
+    QxC /= MC;
+    QyC /= MC;
+    QxA /= MA;
+    QyA /= MA;
 
+    if(bFillQAHist && bApplyGE) {
       fProfileQxCCent[runNumBin][0]->Fill(fCentrality,QxC);
       fProfileQyCCent[runNumBin][0]->Fill(fCentrality,QyC);
       fProfileQxACent[runNumBin][0]->Fill(fCentrality,-QxA);
@@ -601,8 +673,14 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,psiA);
     }
 
-    if(bApplyRC) {
+    double QxCMean = 0.;
+    double QyCMean = 0.;
+    double MCMean  = 0.;
+    double QxAMean = 0.;
+    double QyAMean = 0.;
+    double MAMean  = 0.;
 
+    if(bApplyRC) {
       fHn4DForZNCQxRC = (THnSparseD*)fZDCCalibrationListThisRun->FindObject("fHn4DQxZNCCentVxVySigmaVz");
       fHn4DForZNCQyRC = (THnSparseD*)fZDCCalibrationListThisRun->FindObject("fHn4DQyZNCCentVxVySigmaVz");
       fHn4DForZNCMtRC = (THnSparseD*)fZDCCalibrationListThisRun->FindObject("fHn4DMtZNCCentVxVySigmaVz");
@@ -610,51 +688,88 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHn4DForZNAQyRC = (THnSparseD*)fZDCCalibrationListThisRun->FindObject("fHn4DQyZNACentVxVySigmaVz");
       fHn4DForZNAMtRC = (THnSparseD*)fZDCCalibrationListThisRun->FindObject("fHn4DMtZNACentVxVySigmaVz");
 
-      double QxCMean = fHn4DForZNCQxRC -> GetBinContent(fHn4DForZNCQxRC->GetBin(fillPosition));
-      double QyCMean = fHn4DForZNCQyRC -> GetBinContent(fHn4DForZNCQyRC->GetBin(fillPosition));
-      double MCMean  = fHn4DForZNCMtRC -> GetBinContent(fHn4DForZNCMtRC->GetBin(fillPosition));
-      double QxAMean = fHn4DForZNAQxRC -> GetBinContent(fHn4DForZNAQxRC->GetBin(fillPosition));
-      double QyAMean = fHn4DForZNAQyRC -> GetBinContent(fHn4DForZNAQyRC->GetBin(fillPosition));
-      double MAMean  = fHn4DForZNAMtRC -> GetBinContent(fHn4DForZNAMtRC->GetBin(fillPosition));
+      QxCMean = fHn4DForZNCQxRC -> GetBinContent(fHn4DForZNCQxRC->GetBin(fillPosition));
+      QyCMean = fHn4DForZNCQyRC -> GetBinContent(fHn4DForZNCQyRC->GetBin(fillPosition));
+      MCMean  = fHn4DForZNCMtRC -> GetBinContent(fHn4DForZNCMtRC->GetBin(fillPosition));
+      QxAMean = fHn4DForZNAQxRC -> GetBinContent(fHn4DForZNAQxRC->GetBin(fillPosition));
+      QyAMean = fHn4DForZNAQyRC -> GetBinContent(fHn4DForZNAQyRC->GetBin(fillPosition));
+      MAMean  = fHn4DForZNAMtRC -> GetBinContent(fHn4DForZNAMtRC->GetBin(fillPosition));
 
       if(MCMean < 1.e-6) return;
       if(MAMean < 1.e-6) return;
+      
+      QxCMean /= MCMean; 
+      QyCMean /= MCMean; 
+      QxAMean /= MAMean; 
+      QyAMean /= MAMean;
 
-      if(bFillQAHist) {
-        QxCMean /= MCMean; 
-        QyCMean /= MCMean; 
-        QxAMean /= MAMean; 
-        QyAMean /= MAMean;
+      QxC -= QxCMean; 
+      QyC -= QyCMean; 
+      QxA -= QxAMean; 
+      QyA -= QyAMean; 
+    }
 
-        QxC -= QxCMean; 
-        QyC -= QyCMean; 
-        QxA -= QxAMean; 
-        QyA -= QyAMean; 
-
-        fProfileQxCCent[runNumBin][1]->Fill(fCentrality,QxC);
-        fProfileQyCCent[runNumBin][1]->Fill(fCentrality,QyC);
-        fProfileQxACent[runNumBin][1]->Fill(fCentrality,-QxA);
-        fProfileQyACent[runNumBin][1]->Fill(fCentrality,QyA);
-        fProfileQxAQxCCent[runNumBin][1]->Fill(fCentrality,-QxA*QxC);
-        fProfileQxAQyCCent[runNumBin][1]->Fill(fCentrality,-QxA*QyC);
-        fProfileQyAQxCCent[runNumBin][1]->Fill(fCentrality,QyA*QxC);
-        fProfileQyAQyCCent[runNumBin][1]->Fill(fCentrality,QyA*QyC);
+    if(bFillQAHist && bApplyRC) {
+      fProfileQxCCent[runNumBin][1]->Fill(fCentrality,QxC);
+      fProfileQyCCent[runNumBin][1]->Fill(fCentrality,QyC);
+      fProfileQxACent[runNumBin][1]->Fill(fCentrality,-QxA);
+      fProfileQyACent[runNumBin][1]->Fill(fCentrality,QyA);
+      fProfileQxAQxCCent[runNumBin][1]->Fill(fCentrality,-QxA*QxC);
+      fProfileQxAQyCCent[runNumBin][1]->Fill(fCentrality,-QxA*QyC);
+      fProfileQyAQxCCent[runNumBin][1]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCent[runNumBin][1]->Fill(fCentrality,QyA*QyC);
 
 
-        fProfileQxCCentTot[1]->Fill(fCentrality,QxC);
-        fProfileQyCCentTot[1]->Fill(fCentrality,QyC);
-        fProfileQxACentTot[1]->Fill(fCentrality,-QxA);
-        fProfileQyACentTot[1]->Fill(fCentrality,QyA);
-        fProfileQxAQxCCentTot[1]->Fill(fCentrality,-QxA*QxC);
-        fProfileQxAQyCCentTot[1]->Fill(fCentrality,-QxA*QyC);
-        fProfileQyAQxCCentTot[1]->Fill(fCentrality,QyA*QxC);
-        fProfileQyAQyCCentTot[1]->Fill(fCentrality,QyA*QyC);
+      fProfileQxCCentTot[1]->Fill(fCentrality,QxC);
+      fProfileQyCCentTot[1]->Fill(fCentrality,QyC);
+      fProfileQxACentTot[1]->Fill(fCentrality,-QxA);
+      fProfileQyACentTot[1]->Fill(fCentrality,QyA);
+      fProfileQxAQxCCentTot[1]->Fill(fCentrality,-QxA*QxC);
+      fProfileQxAQyCCentTot[1]->Fill(fCentrality,-QxA*QyC);
+      fProfileQyAQxCCentTot[1]->Fill(fCentrality,QyA*QxC);
+      fProfileQyAQyCCentTot[1]->Fill(fCentrality,QyA*QyC);
 
-        double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
-        double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
+      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+      double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
 
-        fHist2DPsiCCent[runNumBin][1]->Fill(fCentrality,psiC);
-        fHist2DPsiACent[runNumBin][1]->Fill(fCentrality,psiA);
+      fHist2DPsiCCent[runNumBin][1]->Fill(fCentrality,psiC);
+      fHist2DPsiACent[runNumBin][1]->Fill(fCentrality,psiA);
+    }
+
+    if (bFillHistForSF)
+    {
+      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+      double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
+      for (int i = 1; i <= 20; ++i) {
+        fProfile2DShiftCentiCosC[runNumBin]->Fill(fCentrality, i-0.5, TMath::Cos(i * psiC));
+        fProfile2DShiftCentiSinC[runNumBin]->Fill(fCentrality, i-0.5, TMath::Sin(i * psiC));
+        fProfile2DShiftCentiCosA[runNumBin]->Fill(fCentrality, i-0.5, TMath::Cos(i * psiA));
+        fProfile2DShiftCentiSinA[runNumBin]->Fill(fCentrality, i-0.5, TMath::Sin(i * psiA));
+      }
+    }
+    
+    if (bApplySF)
+    {
+      fProfile2DForCosC = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiCosC");
+      fProfile2DForSinC = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiSinC");
+      fProfile2DForCosA = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiCosA");
+      fProfile2DForSinA = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiSinA");
+      double psiC = 0.;
+      double psiA = 0.;
+      for (int i = 1; i <= 20; i++)
+      {
+        double shiftCosC = fProfile2DForCosC->GetBinContent(fProfile2DForCosC->GetXaxis()->FindBin(fCentrality),i);
+        double shiftSinC = fProfile2DForSinC->GetBinContent(fProfile2DForSinC->GetXaxis()->FindBin(fCentrality),i);
+        double shiftCosA = fProfile2DForCosA->GetBinContent(fProfile2DForCosA->GetXaxis()->FindBin(fCentrality),i);
+        double shiftSinA = fProfile2DForSinA->GetBinContent(fProfile2DForSinA->GetXaxis()->FindBin(fCentrality),i);
+        psiC += (2./i) * (-shiftSinC * TMath::Cos(i*psiC) + shiftCosC * TMath::Sin(i*psiC));
+        psiA += (2./i) * (-shiftSinA * TMath::Cos(i*psiA) + shiftCosA * TMath::Sin(i*psiA));
+      }
+
+      if (bFillQAHist)
+      {
+        fHist2DPsiCCent[runNumBin][2]->Fill(fCentrality, psiC);
+        fHist2DPsiACent[runNumBin][2]->Fill(fCentrality, psiA);
       }
     }
                                                         // continue until all the tracks are processed
