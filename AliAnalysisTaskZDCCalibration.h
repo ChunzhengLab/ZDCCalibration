@@ -94,19 +94,19 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //For RC
         //vxsigma vysigma vz
         //Write
-        THnSparseD*              fHn4DQxZNACentVxVySigmaVz[fnRunMax];
-        THnSparseD*              fHn4DQyZNACentVxVySigmaVz[fnRunMax];
-        THnSparseD*              fHn4DMtZNACentVxVySigmaVz[fnRunMax];
         THnSparseD*              fHn4DQxZNCCentVxVySigmaVz[fnRunMax];
         THnSparseD*              fHn4DQyZNCCentVxVySigmaVz[fnRunMax];
         THnSparseD*              fHn4DMtZNCCentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQxZNACentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DQyZNACentVxVySigmaVz[fnRunMax];
+        THnSparseD*              fHn4DMtZNACentVxVySigmaVz[fnRunMax];
         //Read
-        THnSparseD*              fHn4DForZNAQxRC;
-        THnSparseD*              fHn4DForZNAQyRC;
-        THnSparseD*              fHn4DForZNAMtRC;
         THnSparseD*              fHn4DForZNCQxRC;
         THnSparseD*              fHn4DForZNCQyRC;
         THnSparseD*              fHn4DForZNCMtRC;
+        THnSparseD*              fHn4DForZNAQxRC;
+        THnSparseD*              fHn4DForZNAQyRC;
+        THnSparseD*              fHn4DForZNAMtRC;
 
         //For SF
         //Write
@@ -131,8 +131,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile*                fProfileQyAQyCCent[fnRunMax][3];
 
         //Psi
-        TH2D*                   fHist2DPsiCCent[fnRunMax][3];
-        TH2D*                   fHist2DPsiACent[fnRunMax][3];
+        TH2D*                    fHist2DPsiCCent[fnRunMax][3];
+        TH2D*                    fHist2DPsiACent[fnRunMax][3];
 
         int                     GetRunNumBin(int runNum);
 

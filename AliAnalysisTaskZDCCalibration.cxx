@@ -69,12 +69,12 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fProfileForZNCGE(nullptr),
     fProfileForZNAGE(nullptr),
 
-    fHn4DForZNAQxRC(nullptr),
-    fHn4DForZNAQyRC(nullptr),
-    fHn4DForZNAMtRC(nullptr),
     fHn4DForZNCQxRC(nullptr),
     fHn4DForZNCQyRC(nullptr),
     fHn4DForZNCMtRC(nullptr),
+    fHn4DForZNAQxRC(nullptr),
+    fHn4DForZNAQyRC(nullptr),
+    fHn4DForZNAMtRC(nullptr),
 
     fProfile2DForCosC(nullptr),
     fProfile2DForSinC(nullptr),
@@ -97,8 +97,8 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
 
     for (size_t i = 0; i < 3; i++)
     {
-      fHist2DPsiACentTot[i] = nullptr;
       fHist2DPsiCCentTot[i] = nullptr;
+      fHist2DPsiACentTot[i] = nullptr;
     }
 
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
@@ -137,8 +137,8 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
         fProfileQyAQxCCent[iRun][i] = nullptr;
         fProfileQyAQyCCent[iRun][i] = nullptr;
 
-        fHist2DPsiACent[iRun][i] = nullptr;
         fHist2DPsiCCent[iRun][i] = nullptr;
+        fHist2DPsiACent[iRun][i] = nullptr;
       }
     }
 }
@@ -200,8 +200,8 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
 
     for (size_t i = 0; i < 3; i++)
     {
-      fHist2DPsiACentTot[i] = nullptr;
       fHist2DPsiCCentTot[i] = nullptr;
+      fHist2DPsiACentTot[i] = nullptr;
     }
     
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
@@ -241,8 +241,8 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
         fProfileQyAQxCCent[iRun][i] = nullptr;
         fProfileQyAQyCCent[iRun][i] = nullptr;
 
-        fHist2DPsiACent[iRun][i] = nullptr;
         fHist2DPsiCCent[iRun][i] = nullptr;
+        fHist2DPsiACent[iRun][i] = nullptr;
       }
     }
     
