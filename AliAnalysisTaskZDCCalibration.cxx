@@ -348,7 +348,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       fOutputList->Add(fQAList);
     }
 
-    int runNumList[fnRunMax]={
+    int runNumList10h[91]={
       139510, 139507, 139505, 139503, 139465, 139438, 139437, 139360, 139329, 139328, 139314, 139310,
       139309, 139173, 139107, 139105, 139038, 139037, 139036, 139029, 139028, 138872, 138871, 138870,
       138837, 138732, 138730, 138666, 138662, 138653, 138652, 138638, 138624, 138621, 138583, 138582,
@@ -357,14 +357,25 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       137692, 137691, 137686, 137685, 137639, 137638, 137608, 137595, 137549, 137546, 137544, 137541,
       137539, 137531, 137530, 137443, 137441, 137440, 137439, 137434, 137432, 137431, 137430, 137243,
       137236, 137235, 137232, 137231, 137230, 137162, 137161
+    };  
+    //11h
+    int runNumList11h[39]={
+      170387 ,170040, 170268, 170228, 170207, 169838, 170159, 170204, 170311, 170084,
+      169835 ,170088, 170593, 170203, 170270, 169846, 170163, 170388, 170155, 170083,
+      170572 ,169837, 169855, 170306, 170269, 170089, 170309, 170091, 170081, 170230,
+      170085 ,170315, 170027, 170193, 170312, 170313, 170308, 169858, 169859
     };
-
-
-    for (int iRun = 0; iRun < fnRunMax; iRun++)
+     
+    int fAllRunsNum = -999;
+    if (fDataSet.Data()=="10h") fAllRunsNum = 91;
+    if (fDataSet.Data()=="11h") fAllRunsNum = 39;
+    
+    for (int iRun = 0; iRun < fAllRunsNum; iRun++)
     {
       fRunList[iRun] = new TList();
       fRunList[iRun] -> SetOwner(kTRUE);
-      fRunList[iRun] -> SetName(Form("%i", runNumList[iRun]));
+      if (fDataSet.Data()=="10h") fRunList[iRun] -> SetName(Form("%i", runNumList10h[iRun]));
+      if (fDataSet.Data()=="11h") fRunList[iRun] -> SetName(Form("%i", runNumList11h[iRun]));
 
       fHist2DVxVy[iRun] = new TH2D("hist2DVxVy","hist2DVxVy",200,-0.1,0.1,300,0.,0.3);
       fHistVz[iRun] = new TH1D("histVz","histVz",200,-20,20);
@@ -426,6 +437,10 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fProfile2DShiftCentiSinC[iRun] = new TProfile2D("fProfile2DShiftCentiSinC","fProfile2DShiftCentiSinC",10,0.,100.,20,0.,20.);
         fProfile2DShiftCentiCosA[iRun] = new TProfile2D("fProfile2DShiftCentiCosA","fProfile2DShiftCentiCosA",10,0.,100.,20,0.,20.);
         fProfile2DShiftCentiSinA[iRun] = new TProfile2D("fProfile2DShiftCentiSinA","fProfile2DShiftCentiSinA",10,0.,100.,20,0.,20.);
+        fRunList[iRun] -> Add(fProfile2DShiftCentiCosC[iRun]);
+        fRunList[iRun] -> Add(fProfile2DShiftCentiSinC[iRun]);
+        fRunList[iRun] -> Add(fProfile2DShiftCentiCosA[iRun]);
+        fRunList[iRun] -> Add(fProfile2DShiftCentiSinA[iRun]);
       }
 
       if (bApplySF)
@@ -443,14 +458,29 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fQAListThisRun[iRun] ->SetOwner();
         fQAListThisRun[iRun] ->SetName("QA");
 
-        fProfileQxACent[iRun][0] = new TProfile("fProfileQxACentBfRC",Form("<XA> before Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQyACent[iRun][0] = new TProfile("fProfileQyACentBfRC",Form("<YA> before Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQxCCent[iRun][0] = new TProfile("fProfileQxCCentBfRC",Form("<XC> before Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQyCCent[iRun][0] = new TProfile("fProfileQyCCentBfRC",Form("<YC> before Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQxACent[iRun][1] = new TProfile("fProfileQxACentAfRC",Form("<XA> after Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQyACent[iRun][1] = new TProfile("fProfileQyACentAfRC",Form("<YA> after Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQxCCent[iRun][1] = new TProfile("fProfileQxCCentAfRC",Form("<XC> after Recentering Run%d",runNumList[iRun]),100,0.,100.);
-        fProfileQyCCent[iRun][1] = new TProfile("fProfileQyCCentAfRC",Form("<YC> after Recentering Run%d",runNumList[iRun]),100,0.,100.);
+        if (fDataSet.Data()=="10h") 
+        {
+          fProfileQxACent[iRun][0] = new TProfile("fProfileQxACentBfRC",Form("<XA> before Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQyACent[iRun][0] = new TProfile("fProfileQyACentBfRC",Form("<YA> before Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQxCCent[iRun][0] = new TProfile("fProfileQxCCentBfRC",Form("<XC> before Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQyCCent[iRun][0] = new TProfile("fProfileQyCCentBfRC",Form("<YC> before Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQxACent[iRun][1] = new TProfile("fProfileQxACentAfRC",Form("<XA> after Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQyACent[iRun][1] = new TProfile("fProfileQyACentAfRC",Form("<YA> after Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQxCCent[iRun][1] = new TProfile("fProfileQxCCentAfRC",Form("<XC> after Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+          fProfileQyCCent[iRun][1] = new TProfile("fProfileQyCCentAfRC",Form("<YC> after Recentering Run%d",runNumList10h[iRun]),100,0.,100.);
+        }
+
+        if (fDataSet.Data()=="11h") 
+        {
+          fProfileQxACent[iRun][0] = new TProfile("fProfileQxACentBfRC",Form("<XA> before Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQyACent[iRun][0] = new TProfile("fProfileQyACentBfRC",Form("<YA> before Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQxCCent[iRun][0] = new TProfile("fProfileQxCCentBfRC",Form("<XC> before Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQyCCent[iRun][0] = new TProfile("fProfileQyCCentBfRC",Form("<YC> before Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQxACent[iRun][1] = new TProfile("fProfileQxACentAfRC",Form("<XA> after Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQyACent[iRun][1] = new TProfile("fProfileQyACentAfRC",Form("<YA> after Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQxCCent[iRun][1] = new TProfile("fProfileQxCCentAfRC",Form("<XC> after Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+          fProfileQyCCent[iRun][1] = new TProfile("fProfileQyCCentAfRC",Form("<YC> after Recentering Run%d",runNumList11h[iRun]),100,0.,100.);
+        }
 
         fQAListThisRun[iRun]->Add(fProfileQxACent[iRun][0]);
         fQAListThisRun[iRun]->Add(fProfileQyACent[iRun][0]);
@@ -461,14 +491,30 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fQAListThisRun[iRun]->Add(fProfileQxCCent[iRun][1]);
         fQAListThisRun[iRun]->Add(fProfileQyCCent[iRun][1]);
 
-        fProfileQxAQxCCent[iRun][0] = new TProfile("fProfileQxAQxCCentBfRCThisRun",Form("<XAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
-        fProfileQxAQyCCent[iRun][0] = new TProfile("fProfileQxAQyCCentBfRCThisRun",Form("<XAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-        fProfileQyAQxCCent[iRun][0] = new TProfile("fProfileQyAQxCCentBfRCThisRun",Form("<YAXC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-        fProfileQyAQyCCent[iRun][0] = new TProfile("fProfileQyAQyCCentBfRCThisRun",Form("<YAYC> before Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-        fProfileQxAQxCCent[iRun][1] = new TProfile("fProfileQxAQxCCentAfRCThisRun",Form("<XAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.);
-        fProfileQxAQyCCent[iRun][1] = new TProfile("fProfileQxAQyCCentAfRCThisRun",Form("<XAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-        fProfileQyAQxCCent[iRun][1] = new TProfile("fProfileQyAQxCCentAfRCThisRun",Form("<YAXC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
-        fProfileQyAQyCCent[iRun][1] = new TProfile("fProfileQyAQyCCentAfRCThisRun",Form("<YAYC> after Recentering Run%d", runNumList[iRun]), 100, 0., 100.); 
+
+        if (fDataSet.Data()=="10h") 
+        {
+          fProfileQxAQxCCent[iRun][0] = new TProfile("fProfileQxAQxCCentBfRCThisRun",Form("<XAXC> before Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.);
+          fProfileQxAQyCCent[iRun][0] = new TProfile("fProfileQxAQyCCentBfRCThisRun",Form("<XAYC> before Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+          fProfileQyAQxCCent[iRun][0] = new TProfile("fProfileQyAQxCCentBfRCThisRun",Form("<YAXC> before Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+          fProfileQyAQyCCent[iRun][0] = new TProfile("fProfileQyAQyCCentBfRCThisRun",Form("<YAYC> before Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+          fProfileQxAQxCCent[iRun][1] = new TProfile("fProfileQxAQxCCentAfRCThisRun",Form("<XAXC> after Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.);
+          fProfileQxAQyCCent[iRun][1] = new TProfile("fProfileQxAQyCCentAfRCThisRun",Form("<XAYC> after Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+          fProfileQyAQxCCent[iRun][1] = new TProfile("fProfileQyAQxCCentAfRCThisRun",Form("<YAXC> after Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+          fProfileQyAQyCCent[iRun][1] = new TProfile("fProfileQyAQyCCentAfRCThisRun",Form("<YAYC> after Recentering Run%d", runNumList10h[iRun]), 100, 0., 100.); 
+        }
+
+        if (fDataSet.Data()=="11h") 
+        {
+          fProfileQxAQxCCent[iRun][0] = new TProfile("fProfileQxAQxCCentBfRCThisRun",Form("<XAXC> before Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.);
+          fProfileQxAQyCCent[iRun][0] = new TProfile("fProfileQxAQyCCentBfRCThisRun",Form("<XAYC> before Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+          fProfileQyAQxCCent[iRun][0] = new TProfile("fProfileQyAQxCCentBfRCThisRun",Form("<YAXC> before Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+          fProfileQyAQyCCent[iRun][0] = new TProfile("fProfileQyAQyCCentBfRCThisRun",Form("<YAYC> before Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+          fProfileQxAQxCCent[iRun][1] = new TProfile("fProfileQxAQxCCentAfRCThisRun",Form("<XAXC> after Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.);
+          fProfileQxAQyCCent[iRun][1] = new TProfile("fProfileQxAQyCCentAfRCThisRun",Form("<XAYC> after Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+          fProfileQyAQxCCent[iRun][1] = new TProfile("fProfileQyAQxCCentAfRCThisRun",Form("<YAXC> after Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+          fProfileQyAQyCCent[iRun][1] = new TProfile("fProfileQyAQyCCentAfRCThisRun",Form("<YAYC> after Recentering Run%d", runNumList11h[iRun]), 100, 0., 100.); 
+        }
 
         fQAListThisRun[iRun]->Add(fProfileQxAQxCCent[iRun][0]);
         fQAListThisRun[iRun]->Add(fProfileQxAQyCCent[iRun][0]);
@@ -479,12 +525,25 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fQAListThisRun[iRun]->Add(fProfileQyAQxCCent[iRun][1]);
         fQAListThisRun[iRun]->Add(fProfileQyAQyCCent[iRun][1]);
 
-        fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentGE",Form("Hist2D Cent vs. PsiC after Gain Equalization Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentGE",Form("Hist2D Cent vs. PsiA after Gain Equalization Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiCCent[iRun][2] = new TH2D("fHist2DPsiCCentSF",Form("Hist2D Cent vs. PsiC after Shifting Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
-        fHist2DPsiACent[iRun][2] = new TH2D("fHist2DPsiACentSF",Form("Hist2D Cent vs. PsiA after Shifting Run%d",runNumList[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        if (fDataSet.Data()=="10h") 
+        {
+          fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentGE",Form("Hist2D Cent vs. PsiC after Gain Equalization Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentGE",Form("Hist2D Cent vs. PsiA after Gain Equalization Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiCCent[iRun][2] = new TH2D("fHist2DPsiCCentSF",Form("Hist2D Cent vs. PsiC after Shifting Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][2] = new TH2D("fHist2DPsiACentSF",Form("Hist2D Cent vs. PsiA after Shifting Run%d",runNumList10h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        }
+        
+        if (fDataSet.Data()=="11h") 
+        {
+          fHist2DPsiCCent[iRun][0] = new TH2D("fHist2DPsiCCentGE",Form("Hist2D Cent vs. PsiC after Gain Equalization Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][0] = new TH2D("fHist2DPsiACentGE",Form("Hist2D Cent vs. PsiA after Gain Equalization Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiCCent[iRun][1] = new TH2D("fHist2DPsiCCentRC",Form("Hist2D Cent vs. PsiC after Recentering Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][1] = new TH2D("fHist2DPsiACentRC",Form("Hist2D Cent vs. PsiA after Recentering Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiCCent[iRun][2] = new TH2D("fHist2DPsiCCentSF",Form("Hist2D Cent vs. PsiC after Shifting Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+          fHist2DPsiACent[iRun][2] = new TH2D("fHist2DPsiACentSF",Form("Hist2D Cent vs. PsiA after Shifting Run%d",runNumList11h[iRun]),10,0.,100.,50,0.,TMath::TwoPi());
+        }
 
         fQAListThisRun[iRun]->Add(fHist2DPsiCCent[iRun][0]);
         fQAListThisRun[iRun]->Add(fHist2DPsiACent[iRun][0]);
@@ -528,7 +587,6 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     double centTRK = fAOD->GetCentrality()->GetCentralityPercentile("TRK");
     fHist2DCentCorr[0]->Fill(centV0M,centCL1);
     if (fabs(centV0M-centCL1)>7.5) return;
-    if (fabs(centV0M-centTRK)>5) return; // ANA-280
     if (centV0M<0 || centV0M>=100) return;
     fHist2DCentCorr[1]->Fill(centV0M,centCL1);
     fCentrality = centV0M;
@@ -789,7 +847,7 @@ int AliAnalysisTaskZDCCalibration::GetRunNumBin(int runNum)
 {
   int runNumBin=-1;
   // 10h
-  int runNumList[91]={
+  int runNumList10h[91]={
     139510, 139507, 139505, 139503, 139465, 139438, 139437, 139360, 139329, 139328, 139314, 139310,
     139309, 139173, 139107, 139105, 139038, 139037, 139036, 139029, 139028, 138872, 138871, 138870,
     138837, 138732, 138730, 138666, 138662, 138653, 138652, 138638, 138624, 138621, 138583, 138582,
@@ -798,15 +856,27 @@ int AliAnalysisTaskZDCCalibration::GetRunNumBin(int runNum)
     137692, 137691, 137686, 137685, 137639, 137638, 137608, 137595, 137549, 137546, 137544, 137541,
     137539, 137531, 137530, 137443, 137441, 137440, 137439, 137434, 137432, 137431, 137430, 137243,
     137236, 137235, 137232, 137231, 137230, 137162, 137161
+  };  
+  //11h
+  int runNumList11h[39]={
+    170387,170040,170268,170228,170207,169838,170159,170204,170311,170084,
+    169835,170088,170593,170203,170270,169846,170163,170388,170155,170083,
+    170572,169837,169855,170306,170269,170089,170309,170091,170081,170230,
+    170085,170315,170027,170193,170312,170313,170308,169858,169859
   };
-  // 11h
-  // int runNumList[39]={170387,170040,170268,170228,170207,169838,170159,170204,170311,170084,
-  //                     169835,170088,170593,170203,170270,169846,170163,170388,170155,170083,
-  //                     170572,169837,169855,170306,170269,170089,170309,170091,170081,170230,
-  //                     170085,170315,170027,170193,170312,170313,170308,169858,169859};
-  for (int i = 0; i < 91; ++i) {
-    if (runNum==runNumList[i]) {runNumBin=i; break;}
-    else continue;
+  
+  if (fDataSet.Data()=="10h") {
+    for (int i = 0; i < 91; ++i) {
+      if (runNum==runNumList10h[i]) {runNumBin=i; break;}
+      else continue;
+    }
   }
+  if (fDataSet.Data()=="11h") { 
+    for (int i = 0; i < 39; ++i) {
+      if (runNum==runNumList11h[i]) {runNumBin=i; break;}
+      else continue;
+    }
+  }
+
   return runNumBin;
 }

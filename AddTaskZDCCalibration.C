@@ -1,10 +1,10 @@
-// #include <iostream>
-// #include "TROOT.h"
-// #include "TGrid.h"
-// #include "TFile.h"
-// #include "AliAnalysisTaskZDCCalibration.h"
-// #include "AliAnalysisManager.h"
-// using namespace std;
+#include <iostream>
+#include "TROOT.h"
+#include "TGrid.h"
+#include "TFile.h"
+#include "AliAnalysisTaskZDCCalibration.h"
+#include "AliAnalysisManager.h"
+using namespace std;
 
 AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
 {
@@ -26,9 +26,10 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     // now we create an instance of your task
     AliAnalysisTaskZDCCalibration* task = new AliAnalysisTaskZDCCalibration(name.Data());   
     if(!task) return 0x0;
-    task->SelectCollisionCandidates(AliVEvent::kMB);
+    task->SelectCollisionCandidates(AliVEvent::kSemiCentral + AliVEvent::kCentral + AliVEvent::kMB);
     bool isFirstFillVetex = kTRUE;
     task->FirstFillHistVetex(isFirstFillVetex);
+    task->SetDataSet("11h");
 
     // add your task to the manager
     mgr->AddTask(task);

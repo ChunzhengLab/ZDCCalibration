@@ -18,6 +18,8 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         virtual void            UserExec(Option_t* option);
         virtual void            Terminate(Option_t* option);
 
+        virtual void            SetDataSet(TString dataSet) {fDataSet = dataSet;}
+
         virtual void            FirstFillHistVetex(bool fillHistVetex)          {bFirstFillHistVetex = fillHistVetex;}
         virtual void            FillHistForGainEqualization(bool fillHistForGE) {bFillHistForGE = fillHistForGE;}
         virtual void            FillHistForQVZDCRecentering(bool fillHistForRC) {bFillHistForRC = fillHistForRC;}
@@ -32,6 +34,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         virtual void            FillQAHist(bool fillQAHist)                 {bFillQAHist = fillQAHist;}
 
     private:
+        TString                 fDataSet;
         bool                    bFirstFillHistVetex;
         bool                    bFillHistForGE;
         bool                    bFillHistForRC;
@@ -69,7 +72,7 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TH2D*                   fHist2DPsiCCentTot[3];
         TH2D*                   fHist2DPsiACentTot[3];
 
-        const static int        fnRunMax = 91;
+        const static int        fnRunMax = 100;
         TList*                  fRunList[fnRunMax];
         TList*                  fQAListThisRun[fnRunMax];
 
