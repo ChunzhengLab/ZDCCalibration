@@ -65,13 +65,31 @@ void runAnalysis()
         alienHandler->SetAliPhysicsVersion("vAN-20181028_ROOT6-1");
         // set the Alien API version
         alienHandler->SetAPIVersion("V1.1x");
-        // select the input data
-        alienHandler->SetGridDataDir("/alice/data/2010/LHC10h");
-        alienHandler->SetDataPattern("ESDs/pass2/AOD160/*/AliAOD.root");
-        // MC has no prefix, data has prefix 000
+
+        // //10h
+        // // select the input data
+        // alienHandler->SetGridDataDir("/alice/data/2010/LHC10h");
+        // alienHandler->SetDataPattern("ESDs/pass2/AOD160/*/AliAOD.root");
+        // // MC has no prefix, data has prefix 000
+        // alienHandler->SetRunPrefix("000");
+        // // runnumber
+        // alienHandler->AddRunNumber(139510);
+
+        //11h
+        alienHandler->SetGridDataDir("/alice/data/2011/LHC11h_2");
+        alienHandler->SetDataPattern("*ESDs/pass2/AOD145/*AOD.root");
         alienHandler->SetRunPrefix("000");
-        // runnumber
-        alienHandler->AddRunNumber(139510);
+        alienHandler->AddRunNumber(170387);
+        alienHandler->AddRunNumber(170040);
+        alienHandler->AddRunNumber(170268);
+        alienHandler->AddRunNumber(170228);
+        alienHandler->AddRunNumber(170207);
+        alienHandler->AddRunNumber(169838);
+        alienHandler->AddRunNumber(170159);
+        alienHandler->AddRunNumber(170204);
+        alienHandler->AddRunNumber(170311);
+        alienHandler->AddRunNumber(170084);
+    
         // number of files per subjob
         alienHandler->SetSplitMaxInputFileNumber(40);
         alienHandler->SetExecutable("myTask.sh");
