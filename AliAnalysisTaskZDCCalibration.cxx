@@ -42,6 +42,7 @@ using namespace std;            // std namespace: so you can do things like 'cou
 ClassImp(AliAnalysisTaskZDCCalibration) // classimp: necessary for root
 
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTaskSE(), 
+    fDataSet("11h"),
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
@@ -144,6 +145,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
+    fDataSet("11h"),
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
