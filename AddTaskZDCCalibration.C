@@ -26,7 +26,7 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     // now we create an instance of your task
     AliAnalysisTaskZDCCalibration* task = new AliAnalysisTaskZDCCalibration(name.Data());   
     if(!task) return 0x0;
-    task->SelectCollisionCandidates(AliVEvent::kSemiCentral + AliVEvent::kCentral + AliVEvent::kMB);
+    task->SelectCollisionCandidates(AliVEvent::kSemiCentral | AliVEvent::kCentral | AliVEvent::kMB);
     bool isFirstFillVetex = kTRUE;
     task->FirstFillHistVetex(isFirstFillVetex);
     task->SetDataSet("11h");
