@@ -137,7 +137,10 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
         fProfileQxAQyCCent[iRun][i] = nullptr;
         fProfileQyAQxCCent[iRun][i] = nullptr;
         fProfileQyAQyCCent[iRun][i] = nullptr;
+      }
 
+      for (size_t i = 0; i < 3; i++)
+      {
         fHist2DPsiCCent[iRun][i] = nullptr;
         fHist2DPsiACent[iRun][i] = nullptr;
       }
@@ -242,7 +245,9 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
         fProfileQxAQyCCent[iRun][i] = nullptr;
         fProfileQyAQxCCent[iRun][i] = nullptr;
         fProfileQyAQyCCent[iRun][i] = nullptr;
-
+      }
+      for (size_t i = 0; i < 3; i++)
+      {
         fHist2DPsiCCent[iRun][i] = nullptr;
         fHist2DPsiACent[iRun][i] = nullptr;
       }
