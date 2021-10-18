@@ -579,11 +579,18 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     if (runNumBin == -1) return; 
 
     //pile Up
-    fUtils->SetUseOutOfBunchPileUp(true);
-    fUtils->SetUseMVPlpSelection(true);
-    bool isPileup = fUtils->IsPileUpEvent(fAOD);
-    if (isPileup) return;
-    
+    if (fDataSet.Contains("10h"))
+    {
+      fUtils->SetUseOutOfBunchPileUp(true);
+      fUtils->SetUseMVPlpSelection(true);
+      bool isPileup = fUtils->IsPileUpEvent(fAOD);
+      if (isPileup) return;
+    }
+    if (fDataSet.Contains("11h"))
+    {
+      bool isPileup = fAOD->IsPileupFromSPD();
+      if (isPileup) return;
+    }
     double centV0M = fAOD->GetCentrality()->GetCentralityPercentile("V0M");
     double centCL1 = fAOD->GetCentrality()->GetCentralityPercentile("CL1");
     double centTRK = fAOD->GetCentrality()->GetCentralityPercentile("TRK");
