@@ -288,7 +288,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
     fHistCent = new TH1D("fHistCent","Centrality", 100, 0., 100.);
     fHist2DCentCorr[0] = new TH2D("fHist2DCentCorrBfCut","Centrality(before Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
     fHist2DCentCorr[1] = new TH2D("fHist2DCentCorrAfCut","Centrality(after Cut) V0M vs. TRK", 100, 0., 100., 100, 0., 100.);
-    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",200,-0.1,0.1,300,0.,0.3);
+    fHist2DVxVyTot = new TH2D("fHist2DVxVyTot","Vx vs.Vy (all run) ",1000,-0.5,0.5,1000,-0.5,0.5);
     fHistVzTot = new TH1D("fHistVzTot","Vz (all run)",200,-20,20);
 
     fOutputList -> Add(fHistCent);
@@ -384,7 +384,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       if (fDataSet.Contains("10h")) fRunList[iRun] -> SetName(Form("%i", runNumList10h[iRun]));
       if (fDataSet.Contains("11h")) fRunList[iRun] -> SetName(Form("%i", runNumList11h[iRun]));
 
-      fHist2DVxVy[iRun] = new TH2D("hist2DVxVy","hist2DVxVy",200,-0.1,0.1,300,0.,0.3);
+      fHist2DVxVy[iRun] = new TH2D("hist2DVxVy","hist2DVxVy",1000,-0.5,0.5,1000,-0.5,0.5);
       fHistVz[iRun] = new TH1D("histVz","histVz",200,-20,20);
       fRunList[iRun] -> Add(fHist2DVxVy[iRun]);
       fRunList[iRun] -> Add(fHistVz[iRun]);
