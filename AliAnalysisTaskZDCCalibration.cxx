@@ -126,7 +126,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       fProfile2DShiftCentiCosA[iRun] = nullptr;
       fProfile2DShiftCentiSinA[iRun] = nullptr;
 
-      for (size_t i = 0; i < 3; i++)
+      for (size_t i = 0; i < 2; i++)
       {
         fProfileQxCCent[iRun][i] = nullptr;
         fProfileQyCCent[iRun][i] = nullptr;
@@ -230,7 +230,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfile2DShiftCentiCosA[iRun] = nullptr;
       fProfile2DShiftCentiSinA[iRun] = nullptr;
         
-      for (size_t i = 0; i < 3; i++)
+      for (size_t i = 0; i < 2; i++)
       {
 
         fProfileQxCCent[iRun][i] = nullptr;
