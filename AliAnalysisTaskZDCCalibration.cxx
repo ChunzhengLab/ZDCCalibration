@@ -826,8 +826,8 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fProfile2DForSinC = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiSinC");
       fProfile2DForCosA = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiCosA");
       fProfile2DForSinA = (TProfile2D*)fZDCCalibrationListThisRun->FindObject("fProfile2DShiftCentiSinA");
-      double psiC = 0.;
-      double psiA = 0.;
+      double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
+      double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
       for (int i = 1; i <= 20; i++)
       {
         double shiftCosC = fProfile2DForCosC->GetBinContent(fProfile2DForCosC->GetXaxis()->FindBin(fCentrality),i);
