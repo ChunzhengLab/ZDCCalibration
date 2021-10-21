@@ -89,11 +89,6 @@ void runAnalysis()
         alienHandler->AddRunNumber(170268);
         alienHandler->AddRunNumber(170228);
         alienHandler->AddRunNumber(170207);
-        alienHandler->AddRunNumber(169838);
-        alienHandler->AddRunNumber(170159);
-        alienHandler->AddRunNumber(170204);
-        alienHandler->AddRunNumber(170311);
-        alienHandler->AddRunNumber(170084);
     
         // number of files per subjob
         alienHandler->SetSplitMaxInputFileNumber(40);

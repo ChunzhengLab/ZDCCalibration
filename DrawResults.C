@@ -35,7 +35,7 @@ void DrawResults() {
   pQyAQxCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQyAQxCCentTotAfRC");
   pQyAQyCCentTot[1] = (TProfile*)listQATot->FindObject("fProfileQyAQyCCentTotAfRC");
 
-  TList* listThisRun = (TList*)listTot->FindObject("137231");
+  TList* listThisRun = (TList*)listTot->FindObject("170387");
   TProfile* pZNCTowerEnergyThisRun[2];
   TProfile* pZNATowerEnergyThisRun[2];
   for(int i = 0; i<2; i++) pZNCTowerEnergyThisRun[i] = nullptr;
@@ -51,41 +51,44 @@ void DrawResults() {
   TProfile* pQyCCentThisRun[2];
   TProfile* pQxACentThisRun[2];
   TProfile* pQyACentThisRun[2];
-  TH2D*     hPsiACentThisRun[2];
-  TH2D*     hPsiCCentThisRun[2];
+  TH2D*     hPsiACentThisRun[3];
+  TH2D*     hPsiCCentThisRun[3];
 
   for(int i = 0; i<2; i++) pQxCCentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pQyCCentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pQxACentThisRun[i] = nullptr;
   for(int i = 0; i<2; i++) pQyACentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) hPsiACentThisRun[i] = nullptr;
-  for(int i = 0; i<2; i++) hPsiCCentThisRun[i] = nullptr;
+  for(int i = 0; i<3; i++) hPsiACentThisRun[i] = nullptr;
+  for(int i = 0; i<3; i++) hPsiCCentThisRun[i] = nullptr;
 
   pQxCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQxCCentBfRC");
   pQyCCentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQyCCentBfRC");
   pQxACentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQxACentBfRC");
   pQyACentThisRun[0] = (TProfile*)QAThisRun->FindObject("fProfileQyACentBfRC");
 
-  hPsiACentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentBfRC");
-  hPsiCCentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentBfRC");
+  hPsiACentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentGE");
+  hPsiCCentThisRun[0] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentGE");
 
   pQxCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQxCCentAfRC");
   pQyCCentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQyCCentAfRC");
   pQxACentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQxACentAfRC");
   pQyACentThisRun[1] = (TProfile*)QAThisRun->FindObject("fProfileQyACentAfRC");
 
-  hPsiACentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentAfRC");
-  hPsiCCentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentAfRC");
+  hPsiACentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentRC");
+  hPsiCCentThisRun[1] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentRC");
 
-  TH1D* hPsiACent[2][10];
-  TH1D* hPsiCCent[2][10];
+  hPsiACentThisRun[2] = (TH2D*)QAThisRun->FindObject("fHist2DPsiACentSF");
+  hPsiCCentThisRun[2] = (TH2D*)QAThisRun->FindObject("fHist2DPsiCCentSF");
+
+  TH1D* hPsiACent[3][10];
+  TH1D* hPsiCCent[3][10];
   for(int i = 0; i<2; i++) for (int iCent = 0; iCent < 10; iCent++) {hPsiACent[i][iCent] = nullptr; hPsiCCent[i][iCent] = nullptr;}
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 3; i++) {
   for (int iCent = 0; iCent < 10; iCent++) {      
       hPsiACent[i][iCent] = (TH1D*)hPsiACentThisRun[i]->ProjectionY(Form("PsiAcent%d_%d",iCent,i),iCent+1,iCent+1);
       hPsiCCent[i][iCent] = (TH1D*)hPsiCCentThisRun[i]->ProjectionY(Form("PsiCcent%d_%d",iCent,i),iCent+1,iCent+1);
-      hPsiACent[i][iCent]->GetYaxis()->SetRangeUser(0,450);
-      hPsiCCent[i][iCent]->GetYaxis()->SetRangeUser(0,450);
+      hPsiACent[i][iCent]->GetYaxis()->SetRangeUser(0, hPsiACent[i][iCent]->GetBinContent(hPsiACent[i][iCent]->GetMaximumBin())+1000);
+      hPsiCCent[i][iCent]->GetYaxis()->SetRangeUser(0, hPsiCCent[i][iCent]->GetBinContent(hPsiCCent[i][iCent]->GetMaximumBin())+1000);
     }
   }
 
@@ -110,7 +113,7 @@ void DrawResults() {
   hVxVy->Draw("cont0");
   cGlobalQA->cd(4);
   hVz->Draw();
-  cGlobalQA->SaveAs("plots/GlobalQA.png");
+   cGlobalQA->SaveAs("plots/11h/GlobalQA.png");
 
   TCanvas* cGE = new TCanvas("","",1000,800);
   cGE->Divide(2,2);
@@ -137,7 +140,7 @@ void DrawResults() {
   pZNATowerEnergyThisRun[1]->SetMarkerColor(ci[1]);
   pZNATowerEnergyThisRun[1]->SetLineColor(ci[1]);
   pZNATowerEnergyThisRun[1]->SetLineWidth(2);
-  cGE->SaveAs("plots/GE.png");
+  cGE->SaveAs("plots/11h/GE.png");
 
 
 
@@ -172,7 +175,7 @@ void DrawResults() {
   pQyACentThisRun[1]->Draw("SAME");
   pQyACentThisRun[1]->SetMarkerColor(ci[1]);
   pQyACentThisRun[1]->SetLineColor(ci[1]);
-  cQ->SaveAs("plots/Q.png");
+  cQ->SaveAs("plots/11h/Q.png");
 
 
   TCanvas* cQQTot = new TCanvas("","",1000,800);
@@ -230,7 +233,7 @@ void DrawResults() {
   pQyAQyCCentTot[0]->Draw("SAME");
   pQyAQyCCentTot[1]->Draw("SAME");
 
-  cQQTot->SaveAs("plots/QQTot.png");
+  cQQTot->SaveAs("plots/11h/QQTot.png");
 
   TCanvas* cQQ = new TCanvas("","",1000,800);
   cQQ->Divide(2,2);
@@ -246,65 +249,92 @@ void DrawResults() {
   cQQ->cd(4);
   pQyAQyCCentTot[0]->Draw("SAME");
   pQyAQyCCentTot[1]->Draw("SAME");
-  cQQ->SaveAs("plots/QQ.png");
+  cQQ->SaveAs("plots/11h/QQ.png");
 
-  TCanvas* cPlanelego = new TCanvas("","",1000,800);
-  cPlanelego->Divide(2,2);
+  TCanvas* cPlanelego = new TCanvas("","",1400,800);
+  cPlanelego->Divide(3,2);
   cPlanelego->cd(1);
   hPsiCCentThisRun[0]->Draw("lego");
-  cPlanelego->cd(2);
-  hPsiACentThisRun[0]->Draw("lego");
-  cPlanelego->cd(3);
-  hPsiCCentThisRun[1]->Draw("lego");
   cPlanelego->cd(4);
+  hPsiACentThisRun[0]->Draw("lego");
+  cPlanelego->cd(2);
+  hPsiCCentThisRun[1]->Draw("lego");
+  cPlanelego->cd(5);
   hPsiACentThisRun[1]->Draw("lego");
-  cPlanelego->SaveAs("plots/Planelego.png");
+  cPlanelego->cd(3);
+  hPsiCCentThisRun[2]->Draw("lego");
+  cPlanelego->cd(6);
+  hPsiACentThisRun[2]->Draw("lego");
 
-  TCanvas* cPlane = new TCanvas("","",1000,800);
-  cPlane->Divide(2,2);
+  cPlanelego->SaveAs("plots/11h/Planelego.png");
+
+  TCanvas* cPlane = new TCanvas("","",1200,800);
+  cPlane->Divide(3,2);
   cPlane->cd(1);
   hPsiCCentThisRun[0]->Draw("cont4");
-  cPlane->cd(2);
-  hPsiACentThisRun[0]->Draw("cont4");
-  cPlane->cd(3);
-  hPsiCCentThisRun[1]->Draw("cont4");
   cPlane->cd(4);
+  hPsiACentThisRun[0]->Draw("cont4");
+  cPlane->cd(2);
+  hPsiCCentThisRun[1]->Draw("cont4");
+  cPlane->cd(5);
   hPsiACentThisRun[1]->Draw("cont4");
-  cPlane->SaveAs("plots/Plane.png");
+  cPlane->cd(3);
+  hPsiCCentThisRun[2]->Draw("cont4");
+  cPlane->cd(6);
+  hPsiACentThisRun[2]->Draw("cont4");
+  cPlane->SaveAs("plots/11h/Plane.png");
 
-  TCanvas* cPlaneCCentBf = new TCanvas("","",1000,800);
-  cPlaneCCentBf->Divide(3,3);
+  TCanvas* cPlaneCCentGE = new TCanvas("","",1000,800);
+  cPlaneCCentGE->Divide(3,3);
   for (int i = 0; i < 9; i++)
   {
-    cPlaneCCentBf->cd(i+1);
+    cPlaneCCentGE->cd(i+1);
     hPsiCCent[0][i]->Draw();
   }
-  cPlaneCCentBf->SaveAs("plots/PlaneCBf.png");
+  cPlaneCCentGE->SaveAs("plots/11h/PlaneCGE.png");
 
-  TCanvas* cPlaneCCentAf = new TCanvas("","",1000,800);
-  cPlaneCCentAf->Divide(3,3);
+  TCanvas* cPlaneCCentRC = new TCanvas("","",1000,800);
+  cPlaneCCentRC->Divide(3,3);
   for (int i = 0; i < 9; i++)
   {
-    cPlaneCCentAf->cd(i+1);
+    cPlaneCCentRC->cd(i+1);
     hPsiCCent[1][i]->Draw();
   }
-  cPlaneCCentAf->SaveAs("plots/PlaneCAf.png");
+  cPlaneCCentRC->SaveAs("plots/11h/PlaneCRC.png");
 
-  TCanvas* cPlaneACentBf = new TCanvas("","",1000,800);
-  cPlaneACentBf->Divide(3,3);
+  TCanvas* cPlaneCCentSF = new TCanvas("","",1000,800);
+  cPlaneCCentSF->Divide(3,3);
   for (int i = 0; i < 9; i++)
   {
-    cPlaneACentBf->cd(i+1);
+    cPlaneCCentSF->cd(i+1);
+    hPsiCCent[2][i]->Draw();
+  }
+  cPlaneCCentSF->SaveAs("plots/11h/PlaneCSF.png");
+
+  TCanvas* cPlaneACentGE = new TCanvas("","",1000,800);
+  cPlaneACentGE->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneACentGE->cd(i+1);
     hPsiACent[0][i]->Draw();
   }
-  cPlaneACentBf->SaveAs("plots/PlaneABf.png");
+  cPlaneACentGE->SaveAs("plots/11h/PlaneAGE.png");
 
-  TCanvas* cPlaneACentAf = new TCanvas("","",1000,800);
-  cPlaneACentAf->Divide(3,3);
+  TCanvas* cPlaneACentRC = new TCanvas("","",1000,800);
+  cPlaneACentRC->Divide(3,3);
   for (int i = 0; i < 9; i++)
   {
-    cPlaneACentAf->cd(i+1);
+    cPlaneACentRC->cd(i+1);
     hPsiACent[1][i]->Draw();
   }
-  cPlaneACentAf->SaveAs("plots/PlaneAAf.png");
+  cPlaneACentRC->SaveAs("plots/11h/PlaneARC.png");
+
+  TCanvas* cPlaneACentSF = new TCanvas("","",1000,800);
+  cPlaneACentSF->Divide(3,3);
+  for (int i = 0; i < 9; i++)
+  {
+    cPlaneACentSF->cd(i+1);
+    hPsiACent[2][i]->Draw();
+  }
+  cPlaneACentSF->SaveAs("plots/11h/PlaneASF.png");
 }
