@@ -20,30 +20,38 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
 
         virtual void            SetDataSet(TString dataSet) {fDataSet = dataSet;}
 
-        virtual void            FirstFillHistVetex(bool fillHistVetex)          {bFirstFillHistVetex = fillHistVetex;}
-        virtual void            FillHistForGainEqualization(bool fillHistForGE) {bFillHistForGE = fillHistForGE;}
-        virtual void            FillHistForQVZDCRecentering(bool fillHistForRC) {bFillHistForRC = fillHistForRC;}
-        virtual void            FillHistForZDCPlaneShifting(bool fillHitsForSF) {bFillHistForSF = fillHitsForSF;}
-
-        virtual void            ApplyGainEqualization(bool applyGE) {bApplyGE = applyGE;}
-        virtual void            ApplyQVZDCRecentering(bool applyRC) {bApplyRC = applyRC;}
-        virtual void            ApplyZDCPlaneShifting(bool applySF) {bApplySF = applySF;}
-
+        virtual void            FirstFillHistVetex(Bool_t fillHistVetex)          {bFirstFillHistVetex = fillHistVetex;}
+        virtual void            FillHistForGainEqualization(Bool_t fillHistForGE) {bFillHistForGE = fillHistForGE;}
+        virtual void            FillHistForQVZDCRecentering(Bool_t fillHistForRC) {bFillHistForRC = fillHistForRC;}
+        virtual void            FillHistForZDCPlaneShifting(Bool_t fillHitsForSF) {bFillHistForSF = fillHitsForSF;}
+        virtual void            ApplyGainEqualization(Bool_t applyGE) {bApplyGE = applyGE;}
+        virtual void            ApplyQVZDCRecentering(Bool_t applyRC) {bApplyRC = applyRC;}
+        virtual void            ApplyZDCPlaneShifting(Bool_t applySF) {bApplySF = applySF;}
         virtual void            SetZDCCalibrationList(TList* const wlist)   {this->fZDCCalibrationList = wlist;}
+        virtual void            FillQAHist(Bool_t fillQAHist)                 {bFillQAHist = fillQAHist;}
 
-        virtual void            FillQAHist(bool fillQAHist)                 {bFillQAHist = fillQAHist;}
+        virtual void            CalculateV2(Bool_t calculateV2)               {bCalculateV2 = calculateV2;}
+        virtual void            SetFilterBit(UInt_t filterBit)                 {fFilterBit = filterBit;}                            
+
 
     private:
         TString                 fDataSet;
-        bool                    bFirstFillHistVetex;
-        bool                    bFillHistForGE;
-        bool                    bFillHistForRC;
-        bool                    bFillHistForSF;
+        Bool_t                  bFirstFillHistVetex;
+        Bool_t                  bFillHistForGE;
+        Bool_t                  bFillHistForRC;
+        Bool_t                  bFillHistForSF;
 
-        bool                    bApplyGE;
-        bool                    bApplyRC;
-        bool                    bApplySF;
-        bool                    bFillQAHist;
+        Bool_t                  bCalculateV2;
+        UInt_t                  fFilterBit;
+        TH1D*                   fHistPt[2];
+        TH1D*                   fHistEta[2];
+        TH1D*                   fHistPhi[2];
+
+
+        Bool_t                  bApplyGE;
+        Bool_t                  bApplyRC;
+        Bool_t                  bApplySF;
+        Bool_t                  bFillQAHist;
 
         TList*                  fZDCCalibrationList;
 
@@ -136,6 +144,18 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         //Psi
         TH2D*                    fHist2DPsiCCent[fnRunMax][3];
         TH2D*                    fHist2DPsiACent[fnRunMax][3];
+
+
+        //Tracks
+        
+        //V2
+        TProfile*                fProfileV2PsiZNCCent[3];
+        TProfile*                fProfileV2PsiZNCVsPt[10][3];
+        TH1D*                    fProfilePhiPsiZNCCent[10][3];
+
+        TProfile*                fProfileV2PsiZNACent[3];
+        TProfile*                fProfileV2PsiZNAVsPt[10][3];
+        TH1D*                    fProfilePhiPsiZNACent[10][3];
 
         int                     GetRunNumBin(int runNum);
 

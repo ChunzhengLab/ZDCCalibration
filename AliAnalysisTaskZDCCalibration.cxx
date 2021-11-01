@@ -42,11 +42,13 @@ using namespace std;            // std namespace: so you can do things like 'cou
 ClassImp(AliAnalysisTaskZDCCalibration) // classimp: necessary for root
 
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTaskSE(), 
-    fDataSet("11h"),
+    fDataSet("10h"),
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
     bFillHistForSF(kFALSE),
+    bCalculateV2(kFALSE),
+    fFilterBit(1),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
     bApplySF(kFALSE),
@@ -82,6 +84,10 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fProfile2DForCosA(nullptr),
     fProfile2DForSinA(nullptr)
 {
+    for (size_t i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
+    
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
     for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
@@ -145,14 +151,34 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
         fHist2DPsiACent[iRun][i] = nullptr;
       }
     }
+    
+    for (size_t i = 0; i < 3; i++)
+    {
+      fProfileV2PsiZNCCent[i];
+      fProfileV2PsiZNACent[i];      
+    }
+    
+    for (size_t i = 0; i < 10; i++)
+    {
+      for (size_t j = 0; j < 3; i++)
+      {
+        fProfileV2PsiZNCVsPt[i][j];
+        fProfilePhiPsiZNCCent[i][j];
+        fProfileV2PsiZNAVsPt[i][j];
+        fProfilePhiPsiZNACent[i][j];
+      }
+    }
+    
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
-    fDataSet("11h"),
+    fDataSet("10h"),
     bFirstFillHistVetex(kTRUE),
     bFillHistForGE(kTRUE),
     bFillHistForRC(kFALSE),
     bFillHistForSF(kFALSE),
+    bCalculateV2(kFALSE),
+    fFilterBit(1),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
     bApplySF(kFALSE),
@@ -188,6 +214,10 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fProfile2DForCosA(nullptr),
     fProfile2DForSinA(nullptr)
 {
+    for (size_t i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
+    for (size_t i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
+    
     for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
     for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
     for (size_t i = 0; i < 2; i++)
@@ -196,7 +226,6 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfileQyCCentTot[i] = nullptr;
       fProfileQxACentTot[i] = nullptr;
       fProfileQyACentTot[i] = nullptr;
-
       fProfileQxAQxCCentTot[i] = nullptr;
       fProfileQxAQyCCentTot[i] = nullptr;
       fProfileQyAQxCCentTot[i] = nullptr;
@@ -208,7 +237,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fHist2DPsiCCentTot[i] = nullptr;
       fHist2DPsiACentTot[i] = nullptr;
     }
-    
+
     for (size_t iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
@@ -232,10 +261,9 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfile2DShiftCentiSinC[iRun] = nullptr;
       fProfile2DShiftCentiCosA[iRun] = nullptr;
       fProfile2DShiftCentiSinA[iRun] = nullptr;
-        
+
       for (size_t i = 0; i < 2; i++)
       {
-
         fProfileQxCCent[iRun][i] = nullptr;
         fProfileQyCCent[iRun][i] = nullptr;
         fProfileQxACent[iRun][i] = nullptr;
@@ -246,10 +274,28 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
         fProfileQyAQxCCent[iRun][i] = nullptr;
         fProfileQyAQyCCent[iRun][i] = nullptr;
       }
+
       for (size_t i = 0; i < 3; i++)
       {
         fHist2DPsiCCent[iRun][i] = nullptr;
         fHist2DPsiACent[iRun][i] = nullptr;
+      }
+    }
+    
+    for (size_t i = 0; i < 3; i++)
+    {
+      fProfileV2PsiZNCCent[i];
+      fProfileV2PsiZNACent[i];      
+    }
+    
+    for (size_t i = 0; i < 10; i++)
+    {
+      for (size_t j = 0; j < 3; i++)
+      {
+        fProfileV2PsiZNCVsPt[i][j];
+        fProfilePhiPsiZNCCent[i][j];
+        fProfileV2PsiZNAVsPt[i][j];
+        fProfilePhiPsiZNACent[i][j];
       }
     }
     
@@ -297,7 +343,59 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
     fOutputList -> Add(fHist2DVxVyTot);
     fOutputList -> Add(fHistVzTot);
 
-    if(bFillQAHist){
+    if (bCalculateV2)
+    {
+      fHistPt[0]  = new TH1D("fHistPtBfCut","pT before Cut",500,0.,50.);
+      fHistEta[0] = new TH1D("fHistEtaBfCut","Eta before Cut",300,-3,3);
+      fHistPhi[0] = new TH1D("fHistPhiBfCut","Phi before Cut",360,-TMath::TwoPi(),TMath::TwoPi());
+      fHistPt[1]  = new TH1D("fHistPtAffCut","pT after Cut",500,0.,50.);
+      fHistEta[1] = new TH1D("fHistEtaAffCut","Eta after Cut",300,-3,3);
+      fHistPhi[1] = new TH1D("fHistPhiAffCut","Phi after Cut",360,-TMath::TwoPi(),TMath::TwoPi());
+      fOutputList->Add(fHistPt[0]);
+      fOutputList->Add(fHistEta[0]);
+      fOutputList->Add(fHistPhi[0]);
+      fOutputList->Add(fHistPt[1]);
+      fOutputList->Add(fHistEta[1]);
+      fOutputList->Add(fHistPhi[1]);
+
+      fProfileV2PsiZNCCent[0] = new TProfile("fProfileV2PsiZNCCentAfGE","v2 vs. centrality ZNC After GE",10,0.,100.);
+      fProfileV2PsiZNACent[0] = new TProfile("fProfileV2PsiZNACentAfGE","v2 vs. centrality ZNA After GE",10,0.,100.);
+      fProfileV2PsiZNCCent[1] = new TProfile("fProfileV2PsiZNCCentAfRC","v2 vs. centrality ZNC After RC",10,0.,100.);
+      fProfileV2PsiZNACent[1] = new TProfile("fProfileV2PsiZNACentAfRC","v2 vs. centrality ZNA After RC",10,0.,100.);
+      fProfileV2PsiZNCCent[2] = new TProfile("fProfileV2PsiZNCCentAfSF","v2 vs. centrality ZNC After SF",10,0.,100.);
+      fProfileV2PsiZNACent[2] = new TProfile("fProfileV2PsiZNACentAfSF","v2 vs. centrality ZNA After SF",10,0.,100.);
+      for (size_t iCentBin = 0; iCentBin < 10; iCentBin++)
+      {
+        fProfileV2PsiZNCVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNCVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNC After GE Cent%d",iCentBin),120,0.2,6.2);
+        fProfileV2PsiZNAVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNAVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNA After GE Cent%d",iCentBin),120,0.2,6.2);
+        fProfilePhiPsiZNCCent[iCentBin][0] = new TProfile(Form("fProfilePhiPsiZNCAfGECent%d",iCentBin),Form("phi ZNC After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fProfilePhiPsiZNACent[iCentBin][0] = new TProfile(Form("fProfilePhiPsiZNAAfGECent%d",iCentBin),Form("phi ZNA After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fProfileV2PsiZNCVsPt[iCentBin][1] = new TProfile(Form("fProfileV2PsiZNCVsPtAfRCCent%d",iCentBin),Form("V2 vs. pT ZNC After RC Cent%d",iCentBin),120,0.2,6.2);
+        fProfileV2PsiZNAVsPt[iCentBin][1] = new TProfile(Form("fProfileV2PsiZNAVsPtAfRCCent%d",iCentBin),Form("V2 vs. pT ZNA After RC Cent%d",iCentBin),120,0.2,6.2);
+        fProfilePhiPsiZNCCent[iCentBin][1] = new TProfile(Form("fProfilePhiPsiZNCAfRCCent%d",iCentBin),Form("phi ZNC After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fProfilePhiPsiZNACent[iCentBin][1] = new TProfile(Form("fProfilePhiPsiZNAAfRCCent%d",iCentBin),Form("phi ZNA After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fProfileV2PsiZNCVsPt[iCentBin][2] = new TProfile(Form("fProfileV2PsiZNCVsPtAfSFCent%d",iCentBin),Form("V2 vs. pT ZNC After SF Cent%d",iCentBin),120,0.2,6.2);
+        fProfileV2PsiZNAVsPt[iCentBin][2] = new TProfile(Form("fProfileV2PsiZNAVsPtAfSFCent%d",iCentBin),Form("V2 vs. pT ZNA After SF Cent%d",iCentBin),120,0.2,6.2);
+        fProfilePhiPsiZNCCent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNCAfSFCent%d",iCentBin),Form("phi ZNC After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fProfilePhiPsiZNACent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNAAfSFCent%d",iCentBin),Form("phi ZNA After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+      }
+      for (size_t i = 0; i < 3; i++)
+      {
+        fOutputList->Add(fProfileV2PsiZNCCent[i]);
+        fOutputList->Add(fProfileV2PsiZNACent[i]);
+        for (size_t iCentBin = 0; iCentBin < 10; iCentBin++)
+        {
+          fOutputList->Add(fProfileV2PsiZNCVsPt[iCentBin][i]);
+          fOutputList->Add(fProfilePhiPsiZNCCent[iCentBin][i]);
+          fOutputList->Add(fProfileV2PsiZNAVsPt[iCentBin][i]);
+          fOutputList->Add(fProfilePhiPsiZNACent[iCentBin][i]);
+        }
+      }  
+    }
+    
+
+    if(bFillQAHist)
+    {
       fQAList = new TList();
       fQAList ->SetOwner(kTRUE);
       fQAList ->SetName("QA Total");
@@ -620,6 +718,14 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
     TList* fZDCCalibrationListThisRun = nullptr;
     if(!bFirstFillHistVetex) fZDCCalibrationListThisRun = (TList*)fZDCCalibrationList->FindObject(Form("%d",runNum));
 
+    //Plane
+    Double_t PsiZNAGE = -999;
+    Double_t PsiZNCGE = -999;
+    Double_t PsiZNARC = -999;
+    Double_t PsiZNCRC = -999;
+    Double_t PsiZNASF = -999;
+    Double_t PsiZNCSF = -999;
+
     const double x[4] = {-1.75, 1.75, -1.75, 1.75};
     const double y[4] = {-1.75, -1.75, 1.75, 1.75};
     const double* EZNCRaw = fZDC->GetZNCTowerEnergy();
@@ -740,9 +846,14 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
       double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
       double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
+      PsiZNCGE = psiC;
+      PsiZNAGE = psiA;
 
       fHist2DPsiCCent[runNumBin][0]->Fill(fCentrality,psiC);
       fHist2DPsiACent[runNumBin][0]->Fill(fCentrality,psiA);
+
+      fHist2DPsiCCentTot[0]->Fill(fCentrality,psiC);
+      fHist2DPsiACentTot[0]->Fill(fCentrality,psiA);
     }
 
     double QxCMean = 0.;
@@ -803,9 +914,13 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
       double psiC = atan2(QyC,QxC)>0. ? atan2(QyC,QxC) : atan2(QyC,QxC)+TMath::TwoPi();
       double psiA = atan2(QyA,-QxA)>0. ? atan2(QyA,-QxA) : atan2(QyA,-QxA)+TMath::TwoPi();
+      PsiZNCRC = psiC;
+      PsiZNARC = psiA;
 
       fHist2DPsiCCent[runNumBin][1]->Fill(fCentrality,psiC);
       fHist2DPsiACent[runNumBin][1]->Fill(fCentrality,psiA);
+      fHist2DPsiCCentTot[1]->Fill(fCentrality,psiC);
+      fHist2DPsiACentTot[1]->Fill(fCentrality,psiA);
     }
 
     if (bFillHistForSF)
@@ -837,13 +952,104 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         psiC += (2./i) * (-shiftSinC * TMath::Cos(i*psiC) + shiftCosC * TMath::Sin(i*psiC));
         psiA += (2./i) * (-shiftSinA * TMath::Cos(i*psiA) + shiftCosA * TMath::Sin(i*psiA));
       }
+      PsiZNCSF = psiC;
+      PsiZNASF = psiA;
 
       if (bFillQAHist)
       {
         fHist2DPsiCCent[runNumBin][2]->Fill(fCentrality, psiC);
         fHist2DPsiACent[runNumBin][2]->Fill(fCentrality, psiA);
+        fHist2DPsiCCentTot[2]->Fill(fCentrality,psiC);
+        fHist2DPsiACentTot[2]->Fill(fCentrality,psiA);
       }
     }
+
+    int centBin = centV0M/10;
+    if (bCalculateV2) {
+      Int_t nTracks(fAOD->GetNumberOfTracks());
+      for(Int_t iTrack(0); iTrack < nTracks; iTrack++) {
+        AliAODTrack* track = static_cast<AliAODTrack*>(fAOD->GetTrack(iTrack));
+        if (!track) {
+          AliError(Form("%s: Could not get Track", GetName()));
+          continue;
+        }
+	      if (!track->TestFilterBit(fFilterBit)) continue;
+        double pt     = track->Pt();
+        double eta    = track->Eta();
+        double phi    = track->Phi();
+        int    charge = track->Charge();
+        int    nhits  = track->GetTPCNcls();
+        double dedx   = track->GetTPCsignal();
+        double chi2   = track->Chi2perNDF();
+        fHistPt[0]->Fill(pt);
+        fHistEta[0]->Fill(eta);
+        fHistPhi[0]->Fill(phi);
+    
+        if (pt < 0.2 || pt > 30.) continue;
+        if (fabs(eta) > 0.8) continue;
+        if (fabs(nhits) < 70) continue;
+        if (chi2 > 4.) continue;
+    
+        fHistPt[1]->Fill(pt);
+        fHistEta[1]->Fill(eta);
+        fHistPhi[1]->Fill(phi);
+    
+        //------------------
+        // dca
+        //------------------
+        double mag = fAOD->GetMagneticField();
+        double dcaxy  = 999.;
+        double dcaz   = 999.;
+        double r[3];
+        double dca[2];
+        double cov[3];
+        bool proptodca = track->PropagateToDCA(fAOD -> GetPrimaryVertex(), mag, 100., dca, cov);
+        if (track->GetXYZ(r)) {
+          dcaxy = r[0];
+          dcaz  = r[1];
+        } else {
+          double dcax = r[0] - fVtx[0];
+          double dcay = r[1] - fVtx[1];
+          dcaz  = r[2] - fVtx[2];
+          dcaxy = sqrt(dcax*dcax + dcay*dcay);
+          // dcaxy = dca[0];
+        }
+        if (fabs(dcaxy) > 2.4) continue;//DCAxy cut
+        if (fabs(dcaz) > 3.2) continue;//DCAz cut
+
+        //------------------
+        // FLOW
+        //------------------
+        Double_t v2ZNCGETmp = TMath::Cos(2*(phi-PsiZNCGE));
+        Double_t v2ZNAGETmp = TMath::Cos(2*(phi-PsiZNAGE));
+        Double_t v2ZNCRCTmp = TMath::Cos(2*(phi-PsiZNCRC));
+        Double_t v2ZNARCTmp = TMath::Cos(2*(phi-PsiZNARC));
+        Double_t v2ZNCSFTmp = TMath::Cos(2*(phi-PsiZNCSF));
+        Double_t v2ZNASFTmp = TMath::Cos(2*(phi-PsiZNASF));
+
+        fProfileV2PsiZNCCent[0]->Fill(centV0M,v2ZNCGETmp);
+        fProfileV2PsiZNACent[0]->Fill(centV0M,v2ZNAGETmp);
+        fProfileV2PsiZNCCent[1]->Fill(centV0M,v2ZNCRCTmp);
+        fProfileV2PsiZNACent[1]->Fill(centV0M,v2ZNARCTmp);
+        fProfileV2PsiZNCCent[2]->Fill(centV0M,v2ZNCSFTmp);
+        fProfileV2PsiZNACent[2]->Fill(centV0M,v2ZNASFTmp);
+
+        fProfilePhiPsiZNCCent[centBin][0]->Fill(phi-PsiZNCGE);
+        fProfilePhiPsiZNACent[centBin][0]->Fill(phi-PsiZNAGE);
+        fProfilePhiPsiZNCCent[centBin][1]->Fill(phi-PsiZNCRC);
+        fProfilePhiPsiZNACent[centBin][1]->Fill(phi-PsiZNARC);
+        fProfilePhiPsiZNCCent[centBin][2]->Fill(phi-PsiZNCSF);
+        fProfilePhiPsiZNACent[centBin][2]->Fill(phi-PsiZNASF);
+
+        fProfileV2PsiZNCVsPt[centBin][0]->Fill(pt,v2ZNCGETmp);
+        fProfileV2PsiZNAVsPt[centBin][0]->Fill(pt,v2ZNAGETmp);
+        fProfileV2PsiZNCVsPt[centBin][1]->Fill(pt,v2ZNCRCTmp);
+        fProfileV2PsiZNAVsPt[centBin][1]->Fill(pt,v2ZNARCTmp);
+        fProfileV2PsiZNCVsPt[centBin][2]->Fill(pt,v2ZNCSFTmp);
+        fProfileV2PsiZNAVsPt[centBin][2]->Fill(pt,v2ZNASFTmp);
+      }
+    }
+    
                                                         // continue until all the tracks are processed
     PostData(1, fOutputList);                           // stream the results the analysis of this event to
                                                         // the output manager which will take care of writing
