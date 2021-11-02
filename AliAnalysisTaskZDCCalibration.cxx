@@ -48,7 +48,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     bFillHistForRC(kFALSE),
     bFillHistForSF(kFALSE),
     bCalculateV2(kFALSE),
-    fFilterBit(1),
+    fFilterBit(768),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
     bApplySF(kFALSE),
@@ -178,7 +178,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     bFillHistForRC(kFALSE),
     bFillHistForSF(kFALSE),
     bCalculateV2(kFALSE),
-    fFilterBit(1),
+    fFilterBit(768),
     bApplyGE(kFALSE),
     bApplyRC(kFALSE),
     bApplySF(kFALSE),
@@ -345,7 +345,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
 
     if (bCalculateV2)
     {
-      fHistPt[0]  = new TH1D("fHistPtBfCut","pT before Cut",500,0.,50.);
+      fHistPt[0]  = new TH1D("fHistPtBfCut","pT before Cut",600,0.,30.);
       fHistEta[0] = new TH1D("fHistEtaBfCut","Eta before Cut",300,-3,3);
       fHistPhi[0] = new TH1D("fHistPhiBfCut","Phi before Cut",360,-TMath::TwoPi(),TMath::TwoPi());
       fHistPt[1]  = new TH1D("fHistPtAffCut","pT after Cut",500,0.,50.);
