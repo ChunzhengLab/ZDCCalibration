@@ -805,10 +805,15 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
       if(vxBin <= 0 && vyBin <= 0 && vzBin <= 0) return;
       
-      fillPosition[1] = vxBin-0.5;
-      fillPosition[2] = vyBin-0.5;
-      fillPosition[3] = vzBin-0.5;
+      fillPosition[1] = vxBin - 0.5;
+      fillPosition[2] = vyBin - 0.5;
+      fillPosition[3] = vzBin - 0.5;
     }
+
+    QxC /= MC;
+    QyC /= MC;
+    QxA /= MA;
+    QyA /= MA;
 
     if(bFillHistForRC) {
       fHn4DQxZNCCentVxVySigmaVz[runNumBin] -> Fill(fillPosition,QxC);
@@ -820,10 +825,6 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       fHn4DMtZNACentVxVySigmaVz[runNumBin] -> Fill(fillPosition,MA);
     }
 
-    QxC /= MC;
-    QyC /= MC;
-    QxA /= MA;
-    QyA /= MA;
 
     if(bFillQAHist && bApplyGE) {
       fProfileQxCCent[runNumBin][0]->Fill(fCentrality,QxC);
@@ -881,11 +882,6 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       if(MCMean < 1.e-6) return;
       if(MAMean < 1.e-6) return;
       
-      QxCMean /= MCMean; 
-      QyCMean /= MCMean; 
-      QxAMean /= MAMean; 
-      QyAMean /= MAMean;
-
       QxC -= QxCMean; 
       QyC -= QyCMean; 
       QxA -= QxAMean; 
