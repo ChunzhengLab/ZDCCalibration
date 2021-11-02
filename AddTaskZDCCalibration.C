@@ -29,7 +29,7 @@ AliAnalysisTaskZDCCalibration* AddTaskZDCCalibration(TString name = "name")
     task->SelectCollisionCandidates(AliVEvent::kSemiCentral | AliVEvent::kCentral | AliVEvent::kMB);
     bool isFirstFillVetex = kTRUE;
     task->FirstFillHistVetex(isFirstFillVetex);
-    task->SetDataSet("11h");
+    task->SetDataSet("10h");
 
     // add your task to the manager
     mgr->AddTask(task);

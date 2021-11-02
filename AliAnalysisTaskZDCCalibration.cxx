@@ -84,13 +84,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     fProfile2DForCosA(nullptr),
     fProfile2DForSinA(nullptr)
 {
-    for (size_t i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
     
-    for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
-    for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++) {fVtx[i] = -999;}
+    for (int i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
+    for (int i = 0; i < 2; i++)
     {
       fProfileQxCCentTot[i] = nullptr;
       fProfileQyCCentTot[i] = nullptr;
@@ -102,13 +102,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       fProfileQyAQyCCentTot[i] = nullptr;
     }
 
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       fHist2DPsiCCentTot[i] = nullptr;
       fHist2DPsiACentTot[i] = nullptr;
     }
 
-    for (size_t iRun = 0; iRun < fnRunMax; iRun++)
+    for (int iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
       fQAListThisRun[iRun]            = nullptr;
@@ -132,7 +132,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       fProfile2DShiftCentiCosA[iRun] = nullptr;
       fProfile2DShiftCentiSinA[iRun] = nullptr;
 
-      for (size_t i = 0; i < 2; i++)
+      for (int i = 0; i < 2; i++)
       {
         fProfileQxCCent[iRun][i] = nullptr;
         fProfileQyCCent[iRun][i] = nullptr;
@@ -145,22 +145,22 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
         fProfileQyAQyCCent[iRun][i] = nullptr;
       }
 
-      for (size_t i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
       {
         fHist2DPsiCCent[iRun][i] = nullptr;
         fHist2DPsiACent[iRun][i] = nullptr;
       }
     }
     
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       fProfileV2PsiZNCCent[i];
       fProfileV2PsiZNACent[i];      
     }
     
-    for (size_t i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-      for (size_t j = 0; j < 3; i++)
+      for (int j = 0; j < 3; i++)
       {
         fProfileV2PsiZNCVsPt[i][j];
         fProfilePhiPsiZNCCent[i][j];
@@ -214,13 +214,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     fProfile2DForCosA(nullptr),
     fProfile2DForSinA(nullptr)
 {
-    for (size_t i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistPt[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistEta[i] = nullptr;}
+    for (int i = 0; i < 2; i++) {fHistPhi[i] = nullptr;}
     
-    for (size_t i = 0; i < 3; i++) {fVtx[i] = -999;}
-    for (size_t i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
-    for (size_t i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++) {fVtx[i] = -999;}
+    for (int i = 0; i < 2; i++) {fHist2DCentCorr[i] = nullptr;}
+    for (int i = 0; i < 2; i++)
     {
       fProfileQxCCentTot[i] = nullptr;
       fProfileQyCCentTot[i] = nullptr;
@@ -232,13 +232,13 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfileQyAQyCCentTot[i] = nullptr;
     }
 
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       fHist2DPsiCCentTot[i] = nullptr;
       fHist2DPsiACentTot[i] = nullptr;
     }
 
-    for (size_t iRun = 0; iRun < fnRunMax; iRun++)
+    for (int iRun = 0; iRun < fnRunMax; iRun++)
     {
       fRunList[iRun]                  = nullptr;
       fQAListThisRun[iRun]            = nullptr;
@@ -262,7 +262,7 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       fProfile2DShiftCentiCosA[iRun] = nullptr;
       fProfile2DShiftCentiSinA[iRun] = nullptr;
 
-      for (size_t i = 0; i < 2; i++)
+      for (int i = 0; i < 2; i++)
       {
         fProfileQxCCent[iRun][i] = nullptr;
         fProfileQyCCent[iRun][i] = nullptr;
@@ -275,22 +275,22 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
         fProfileQyAQyCCent[iRun][i] = nullptr;
       }
 
-      for (size_t i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
       {
         fHist2DPsiCCent[iRun][i] = nullptr;
         fHist2DPsiACent[iRun][i] = nullptr;
       }
     }
     
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       fProfileV2PsiZNCCent[i];
       fProfileV2PsiZNACent[i];      
     }
     
-    for (size_t i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-      for (size_t j = 0; j < 3; i++)
+      for (int j = 0; j < 3; i++)
       {
         fProfileV2PsiZNCVsPt[i][j];
         fProfilePhiPsiZNCCent[i][j];
@@ -364,7 +364,7 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       fProfileV2PsiZNACent[1] = new TProfile("fProfileV2PsiZNACentAfRC","v2 vs. centrality ZNA After RC",10,0.,100.);
       fProfileV2PsiZNCCent[2] = new TProfile("fProfileV2PsiZNCCentAfSF","v2 vs. centrality ZNC After SF",10,0.,100.);
       fProfileV2PsiZNACent[2] = new TProfile("fProfileV2PsiZNACentAfSF","v2 vs. centrality ZNA After SF",10,0.,100.);
-      for (size_t iCentBin = 0; iCentBin < 10; iCentBin++)
+      for (int iCentBin = 0; iCentBin < 10; iCentBin++)
       {
         fProfileV2PsiZNCVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNCVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNC After GE Cent%d",iCentBin),120,0.2,6.2);
         fProfileV2PsiZNAVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNAVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNA After GE Cent%d",iCentBin),120,0.2,6.2);
@@ -379,11 +379,11 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fProfilePhiPsiZNCCent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNCAfSFCent%d",iCentBin),Form("phi ZNC After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
         fProfilePhiPsiZNACent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNAAfSFCent%d",iCentBin),Form("phi ZNA After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
       }
-      for (size_t i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
       {
         fOutputList->Add(fProfileV2PsiZNCCent[i]);
         fOutputList->Add(fProfileV2PsiZNACent[i]);
-        for (size_t iCentBin = 0; iCentBin < 10; iCentBin++)
+        for (int iCentBin = 0; iCentBin < 10; iCentBin++)
         {
           fOutputList->Add(fProfileV2PsiZNCVsPt[iCentBin][i]);
           fOutputList->Add(fProfilePhiPsiZNCCent[iCentBin][i]);
@@ -960,7 +960,7 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
       }
     }
 
-    int centBin = centV0M/10;
+    int centBin = (int)centV0M/10;
     if (bCalculateV2) {
       Int_t nTracks(fAOD->GetNumberOfTracks());
       for(Int_t iTrack(0); iTrack < nTracks; iTrack++) {
