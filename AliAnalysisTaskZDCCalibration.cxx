@@ -160,15 +160,14 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     
     for (int i = 0; i < 10; i++)
     {
-      for (int j = 0; j < 3; i++)
+      for (int j = 0; j < 3; j++)
       {
         fProfileV2PsiZNCVsPt[i][j]  = nullptr;
-        fProfilePhiPsiZNCCent[i][j] = nullptr;
         fProfileV2PsiZNAVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNCCent[i][j] = nullptr;
         fProfilePhiPsiZNACent[i][j] = nullptr;
       }
     }
-    
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
@@ -290,11 +289,11 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     
     for (int i = 0; i < 10; i++)
     {
-      for (int j = 0; j < 3; i++)
+      for (int j = 0; j < 3; j++)
       {
         fProfileV2PsiZNCVsPt[i][j]  = nullptr;
-        fProfilePhiPsiZNCCent[i][j] = nullptr;
         fProfileV2PsiZNAVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNCCent[i][j] = nullptr;
         fProfilePhiPsiZNACent[i][j] = nullptr;
       }
     }
