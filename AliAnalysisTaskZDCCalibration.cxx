@@ -154,18 +154,18 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
     
     for (int i = 0; i < 3; i++)
     {
-      fProfileV2PsiZNCCent[i];
-      fProfileV2PsiZNACent[i];      
+      fProfileV2PsiZNCCent[i] = nullptr;
+      fProfileV2PsiZNACent[i] = nullptr;      
     }
     
     for (int i = 0; i < 10; i++)
     {
       for (int j = 0; j < 3; i++)
       {
-        fProfileV2PsiZNCVsPt[i][j];
-        fProfilePhiPsiZNCCent[i][j];
-        fProfileV2PsiZNAVsPt[i][j];
-        fProfilePhiPsiZNACent[i][j];
+        fProfileV2PsiZNCVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNCCent[i][j] = nullptr;
+        fProfileV2PsiZNAVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNACent[i][j] = nullptr;
       }
     }
     
@@ -284,18 +284,18 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
     
     for (int i = 0; i < 3; i++)
     {
-      fProfileV2PsiZNCCent[i];
-      fProfileV2PsiZNACent[i];      
+      fProfileV2PsiZNCCent[i] = nullptr;
+      fProfileV2PsiZNACent[i] = nullptr;      
     }
     
     for (int i = 0; i < 10; i++)
     {
       for (int j = 0; j < 3; i++)
       {
-        fProfileV2PsiZNCVsPt[i][j];
-        fProfilePhiPsiZNCCent[i][j];
-        fProfileV2PsiZNAVsPt[i][j];
-        fProfilePhiPsiZNACent[i][j];
+        fProfileV2PsiZNCVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNCCent[i][j] = nullptr;
+        fProfileV2PsiZNAVsPt[i][j]  = nullptr;
+        fProfilePhiPsiZNACent[i][j] = nullptr;
       }
     }
     
