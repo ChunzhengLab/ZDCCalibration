@@ -153,9 +153,21 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile*                fProfileV2PsiZNACent[3];
         TProfile*                fProfileV2PsiZNCVsPt[10][3];
         TProfile*                fProfileV2PsiZNAVsPt[10][3];
-        TH1D*                    fProfilePhiPsiZNCCent[10][3];
-        TH1D*                    fProfilePhiPsiZNACent[10][3];
+        TH1D*                    fHistPhiPsiZNCCent[10][3];
+        TH1D*                    fHistPhiPsiZNACent[10][3];
 
+        //Res
+        TProfile*                fProfileZNCTPCCorr[3];
+        TProfile*                fProfileZNATPCCorr[3];
+        TProfile*                fProfileZNCTPCNegCorr[3];
+        TProfile*                fProfileZNATPCNegCorr[3];
+        TProfile*                fProfileZNCTPCPosCorr[3];
+        TProfile*                fProfileZNATPCPosCorr[3];
+        TProfile*                fProfileTPCPosNegCorr[3];
+
+        //Diff
+        TH2D*                    fHist2DPhiPsiZNCVsCentPt[3];
+        TH2D*                    fHist2DPhiPsiZNAVsCentPt[3];
 
         int                     GetRunNumBin(int runNum);
 

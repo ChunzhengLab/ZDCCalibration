@@ -164,10 +164,25 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration() : AliAnalysisTask
       {
         fProfileV2PsiZNCVsPt[i][j]  = nullptr;
         fProfileV2PsiZNAVsPt[i][j]  = nullptr;
-        fProfilePhiPsiZNCCent[i][j] = nullptr;
-        fProfilePhiPsiZNACent[i][j] = nullptr;
+        fHistPhiPsiZNCCent[i][j] = nullptr;
+        fHistPhiPsiZNACent[i][j] = nullptr;
       }
     }
+
+    for (int i = 0; i < 3; i++)
+    {
+      fProfileZNCTPCCorr[i]    = nullptr;
+      fProfileZNATPCCorr[i]    = nullptr;
+      fProfileZNCTPCNegCorr[i] = nullptr;
+      fProfileZNATPCNegCorr[i] = nullptr;
+      fProfileZNCTPCPosCorr[i] = nullptr;
+      fProfileZNATPCPosCorr[i] = nullptr;
+      fProfileTPCPosNegCorr[i] = nullptr;
+
+      fHist2DPhiPsiZNCVsCentPt[i] = nullptr;
+      fHist2DPhiPsiZNAVsCentPt[i] = nullptr;
+    }
+    
 }
 //_____________________________________________________________________________
 AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) : AliAnalysisTaskSE(name),
@@ -293,9 +308,23 @@ AliAnalysisTaskZDCCalibration::AliAnalysisTaskZDCCalibration(const char* name) :
       {
         fProfileV2PsiZNCVsPt[i][j]  = nullptr;
         fProfileV2PsiZNAVsPt[i][j]  = nullptr;
-        fProfilePhiPsiZNCCent[i][j] = nullptr;
-        fProfilePhiPsiZNACent[i][j] = nullptr;
+        fHistPhiPsiZNCCent[i][j] = nullptr;
+        fHistPhiPsiZNACent[i][j] = nullptr;
       }
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+      fProfileZNCTPCCorr[i]    = nullptr;
+      fProfileZNATPCCorr[i]    = nullptr;
+      fProfileZNCTPCNegCorr[i] = nullptr;
+      fProfileZNATPCNegCorr[i] = nullptr;
+      fProfileZNCTPCPosCorr[i] = nullptr;
+      fProfileZNATPCPosCorr[i] = nullptr;
+      fProfileTPCPosNegCorr[i] = nullptr;
+
+      fHist2DPhiPsiZNCVsCentPt[i] = nullptr;
+      fHist2DPhiPsiZNAVsCentPt[i] = nullptr;
     }
     
     // constructor
@@ -367,16 +396,16 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
       {
         fProfileV2PsiZNCVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNCVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNC After GE Cent%d",iCentBin),120,0.2,6.2);
         fProfileV2PsiZNAVsPt[iCentBin][0] = new TProfile(Form("fProfileV2PsiZNAVsPtAfGECent%d",iCentBin),Form("V2 vs. pT ZNA After GE Cent%d",iCentBin),120,0.2,6.2);
-        fProfilePhiPsiZNCCent[iCentBin][0] = new TProfile(Form("fProfilePhiPsiZNCAfGECent%d",iCentBin),Form("phi ZNC After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
-        fProfilePhiPsiZNACent[iCentBin][0] = new TProfile(Form("fProfilePhiPsiZNAAfGECent%d",iCentBin),Form("phi ZNA After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNCCent[iCentBin][0]   = new TH1D(Form("fHistPhiPsiZNCAfGECent%d",iCentBin),Form("phi ZNC After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNACent[iCentBin][0]   = new TH1D(Form("fHistPhiPsiZNAAfGECent%d",iCentBin),Form("phi ZNA After GE Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
         fProfileV2PsiZNCVsPt[iCentBin][1] = new TProfile(Form("fProfileV2PsiZNCVsPtAfRCCent%d",iCentBin),Form("V2 vs. pT ZNC After RC Cent%d",iCentBin),120,0.2,6.2);
         fProfileV2PsiZNAVsPt[iCentBin][1] = new TProfile(Form("fProfileV2PsiZNAVsPtAfRCCent%d",iCentBin),Form("V2 vs. pT ZNA After RC Cent%d",iCentBin),120,0.2,6.2);
-        fProfilePhiPsiZNCCent[iCentBin][1] = new TProfile(Form("fProfilePhiPsiZNCAfRCCent%d",iCentBin),Form("phi ZNC After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
-        fProfilePhiPsiZNACent[iCentBin][1] = new TProfile(Form("fProfilePhiPsiZNAAfRCCent%d",iCentBin),Form("phi ZNA After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNCCent[iCentBin][1]   = new TH1D(Form("fHistPhiPsiZNCAfRCCent%d",iCentBin),Form("phi ZNC After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNACent[iCentBin][1]   = new TH1D(Form("fHistPhiPsiZNAAfRCCent%d",iCentBin),Form("phi ZNA After RC Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
         fProfileV2PsiZNCVsPt[iCentBin][2] = new TProfile(Form("fProfileV2PsiZNCVsPtAfSFCent%d",iCentBin),Form("V2 vs. pT ZNC After SF Cent%d",iCentBin),120,0.2,6.2);
         fProfileV2PsiZNAVsPt[iCentBin][2] = new TProfile(Form("fProfileV2PsiZNAVsPtAfSFCent%d",iCentBin),Form("V2 vs. pT ZNA After SF Cent%d",iCentBin),120,0.2,6.2);
-        fProfilePhiPsiZNCCent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNCAfSFCent%d",iCentBin),Form("phi ZNC After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
-        fProfilePhiPsiZNACent[iCentBin][2] = new TProfile(Form("fProfilePhiPsiZNAAfSFCent%d",iCentBin),Form("phi ZNA After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNCCent[iCentBin][2]   = new TH1D(Form("fHistPhiPsiZNCAfSFCent%d",iCentBin),Form("phi ZNC After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
+        fHistPhiPsiZNACent[iCentBin][2]   = new TH1D(Form("fHistPhiPsiZNAAfSFCent%d",iCentBin),Form("phi ZNA After SF Cent%d",iCentBin),360,-TMath::TwoPi(),TMath::TwoPi());
       }
       for (int i = 0; i < 3; i++)
       {
@@ -385,10 +414,33 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         for (int iCentBin = 0; iCentBin < 10; iCentBin++)
         {
           fOutputList->Add(fProfileV2PsiZNCVsPt[iCentBin][i]);
-          fOutputList->Add(fProfilePhiPsiZNCCent[iCentBin][i]);
+          fOutputList->Add(fHistPhiPsiZNCCent[iCentBin][i]);
           fOutputList->Add(fProfileV2PsiZNAVsPt[iCentBin][i]);
-          fOutputList->Add(fProfilePhiPsiZNACent[iCentBin][i]);
+          fOutputList->Add(fHistPhiPsiZNACent[iCentBin][i]);
         }
+      }
+
+      for (int i = 0; i < 3; i++)
+      {
+        fProfileZNCTPCCorr[i]    = new TProfile(Form("fProfileZNCTPCCorr_%d",i), Form("fProfileZNCTPCCorr_%d",i), 10, 0., 100.);
+        fProfileZNATPCCorr[i]    = new TProfile(Form("fProfileZNATPCCorr_%d",i), Form("fProfileZNATPCCorr_%d",i), 10, 0., 100.);
+        fProfileZNCTPCNegCorr[i] = new TProfile(Form("fProfileZNCTPCNegCorr_%d",i), Form("fProfileZNCTPCNegCorr_%d",i), 10, 0., 100.);
+        fProfileZNATPCNegCorr[i] = new TProfile(Form("fProfileZNATPCNegCorr_%d",i), Form("fProfileZNATPCNegCorr_%d",i), 10, 0., 100.);
+        fProfileZNCTPCPosCorr[i] = new TProfile(Form("fProfileZNCTPCPosCorr_%d",i), Form("fProfileZNCTPCPosCorr_%d",i), 10, 0., 100.);
+        fProfileZNATPCPosCorr[i] = new TProfile(Form("fProfileZNATPCPosCorr_%d",i), Form("fProfileZNATPCPosCorr_%d",i), 10, 0., 100.);
+        fProfileTPCPosNegCorr[i] = new TProfile(Form("fProfileTPCPosNegCorr_%d",i), Form("fProfileTPCPosNegCorr_%d",i), 10, 0., 100.);
+        fHist2DPhiPsiZNCVsCentPt[i] = new TH2D(Form("fHistPhiPsiZNCVsCentPt_%d",i), Form("fHistPhiPsiZNCVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
+        fHist2DPhiPsiZNAVsCentPt[i] = new TH2D(Form("fHistPhiPsiZNAVsCentPt_%d",i), Form("fHistPhiPsiZNAVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
+
+        fOutputList->Add(fProfileZNCTPCCorr[i]);
+        fOutputList->Add(fProfileZNATPCCorr[i]);
+        fOutputList->Add(fProfileZNCTPCNegCorr[i]);
+        fOutputList->Add(fProfileZNATPCNegCorr[i]);
+        fOutputList->Add(fProfileZNCTPCPosCorr[i]);
+        fOutputList->Add(fProfileZNATPCPosCorr[i]);
+        fOutputList->Add(fProfileTPCPosNegCorr[i]);
+        fOutputList->Add(fHist2DPhiPsiZNCVsCentPt[i]);
+        fOutputList->Add(fHist2DPhiPsiZNAVsCentPt[i]);
       }  
     }
     
@@ -1029,12 +1081,12 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         fProfileV2PsiZNCCent[2]->Fill(centV0M,v2ZNCSFTmp);
         fProfileV2PsiZNACent[2]->Fill(centV0M,v2ZNASFTmp);
 
-        fProfilePhiPsiZNCCent[centBin][0]->Fill(phi-PsiZNCGE);
-        fProfilePhiPsiZNACent[centBin][0]->Fill(phi-PsiZNAGE);
-        fProfilePhiPsiZNCCent[centBin][1]->Fill(phi-PsiZNCRC);
-        fProfilePhiPsiZNACent[centBin][1]->Fill(phi-PsiZNARC);
-        fProfilePhiPsiZNCCent[centBin][2]->Fill(phi-PsiZNCSF);
-        fProfilePhiPsiZNACent[centBin][2]->Fill(phi-PsiZNASF);
+        fHistPhiPsiZNCCent[centBin][0]->Fill(phi-PsiZNCGE);
+        fHistPhiPsiZNACent[centBin][0]->Fill(phi-PsiZNAGE);
+        fHistPhiPsiZNCCent[centBin][1]->Fill(phi-PsiZNCRC);
+        fHistPhiPsiZNACent[centBin][1]->Fill(phi-PsiZNARC);
+        fHistPhiPsiZNCCent[centBin][2]->Fill(phi-PsiZNCSF);
+        fHistPhiPsiZNACent[centBin][2]->Fill(phi-PsiZNASF);
 
         fProfileV2PsiZNCVsPt[centBin][0]->Fill(pt,v2ZNCGETmp);
         fProfileV2PsiZNAVsPt[centBin][0]->Fill(pt,v2ZNAGETmp);
