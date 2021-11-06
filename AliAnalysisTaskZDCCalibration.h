@@ -163,7 +163,15 @@ class AliAnalysisTaskZDCCalibration : public AliAnalysisTaskSE
         TProfile*                fProfileZNATPCNegCorr[3];
         TProfile*                fProfileZNCTPCPosCorr[3];
         TProfile*                fProfileZNATPCPosCorr[3];
-        TProfile*                fProfileTPCPosNegCorr[3];
+        TProfile*                fProfileTPCPosNegCorr;
+
+        //TPC Psi
+        TH2D*                    fHist2DTPCPsiCentTot;
+        TH2D*                    fHist2DTPCPsiPosCentTot;
+        TH2D*                    fHist2DTPCPsiNegCentTot;
+        TH2D*                    fHsit2DTPCPsiCent[fnRunMax];
+        TH2D*                    fHist2DTPCPsiPosCent[fnRunMax];
+        TH2D*                    fHist2DTPCPsiNegCent[fnRunMax];
 
         //Diff
         TH2D*                    fHist2DPhiPsiZNCVsCentPt[3];
