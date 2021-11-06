@@ -429,8 +429,8 @@ void AliAnalysisTaskZDCCalibration::UserCreateOutputObjects()
         fProfileZNCTPCPosCorr[i] = new TProfile(Form("fProfileZNCTPCPosCorr_%d",i), Form("fProfileZNCTPCPosCorr_%d",i), 10, 0., 100.);
         fProfileZNATPCPosCorr[i] = new TProfile(Form("fProfileZNATPCPosCorr_%d",i), Form("fProfileZNATPCPosCorr_%d",i), 10, 0., 100.);
         fProfileTPCPosNegCorr[i] = new TProfile(Form("fProfileTPCPosNegCorr_%d",i), Form("fProfileTPCPosNegCorr_%d",i), 10, 0., 100.);
-        fHist2DPhiPsiZNCVsCentPt[i] = new TH2D(Form("fHistPhiPsiZNCVsCentPt_%d",i), Form("fHistPhiPsiZNCVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
-        fHist2DPhiPsiZNAVsCentPt[i] = new TH2D(Form("fHistPhiPsiZNAVsCentPt_%d",i), Form("fHistPhiPsiZNAVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
+        fHist2DPhiPsiZNCVsCentPt[i] = new TH2D(Form("fHist2DPhiPsiZNCVsCentPt_%d",i), Form("fHist2DPhiPsiZNCVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
+        fHist2DPhiPsiZNAVsCentPt[i] = new TH2D(Form("fHist2DPhiPsiZNAVsCentPt_%d",i), Form("fHist2DPhiPsiZNAVsCentPt_%d",i), 10, 0.,100., 60,0.2,6.2);
 
         fOutputList->Add(fProfileZNCTPCCorr[i]);
         fOutputList->Add(fProfileZNATPCCorr[i]);
@@ -1013,7 +1013,16 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
 
     int centBin = (int)centV0M/10;
     if (bCalculateV2) {
+      Double_t sumCos2PhiPos = 0.;
+      Double_t sumSin2PhiPos = 0.;
+      Double_t sumCos2PhiNeg = 0.;
+      Double_t sumSin2PhiNeg = 0.;
+      Int_t sumMPos = 0.;
+      Int_t sumMNeg = 0.;
+
       Int_t nTracks(fAOD->GetNumberOfTracks());
+      if (nTracks < 4) return;
+      
       for(Int_t iTrack(0); iTrack < nTracks; iTrack++) {
         AliAODTrack* track = static_cast<AliAODTrack*>(fAOD->GetTrack(iTrack));
         if (!track) {
@@ -1064,6 +1073,17 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         if (fabs(dcaxy) > 2.4) continue;//DCAxy cut
         if (fabs(dcaz) > 3.2) continue;//DCAz cut
 
+        if(eta>0)
+        {
+          sumCos2PhiPos += TMath::Cos(2 * phi);
+          sumSin2PhiPos += TMath::Sin(2 * phi);
+          sumMPos++;
+        } else {
+          sumCos2PhiNeg += TMath::Cos(2 * phi);
+          sumSin2PhiNeg += TMath::Sin(2 * phi);
+          sumMNeg++;
+        }
+        
         //------------------
         // FLOW
         //------------------
@@ -1095,6 +1115,27 @@ void AliAnalysisTaskZDCCalibration::UserExec(Option_t *)
         fProfileV2PsiZNCVsPt[centBin][2]->Fill(pt,v2ZNCSFTmp);
         fProfileV2PsiZNAVsPt[centBin][2]->Fill(pt,v2ZNASFTmp);
       }
+      if (sumMPos<1.e-6 && sumMNeg<1.e-6) return;
+      
+      Double_t Q2xPos = sumCos2PhiPos/sumMPos;
+      Double_t Q2yPos = sumSin2PhiPos/sumMPos;
+      Double_t Q2xNeg = sumCos2PhiNeg/sumMNeg;
+      Double_t Q2yNeg = sumSin2PhiNeg/sumMNeg;
+      
+      Double_t PsiTPC    = atan2(Q2yPos+Q2yNeg, Q2xPos+Q2xNeg)>0. ? atan2(Q2yPos+Q2yNeg, Q2xPos+Q2xNeg)/2. : atan2(Q2yPos+Q2yNeg, Q2xPos+Q2xNeg)/2.+TMath::Pi();
+      Double_t PsiTPCPos = atan2(Q2yPos,Q2xPos)>0. ? atan2(Q2yPos,Q2xPos)/2. : atan2(Q2yNeg,Q2xPos)/2.+TMath::Pi();
+      Double_t PsiTPCNeg = atan2(Q2yNeg,Q2xNeg)>0. ? atan2(Q2yNeg,Q2xNeg)/2. : atan2(Q2xNeg,Q2xNeg)/2.+TMath::Pi();
+
+      fProfileZNCTPCCorr[0]    -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiTPCNeg)));
+      fProfileZNATPCCorr[0]    -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiTPCNeg)));  
+      fProfileZNCTPCNegCorr[0] -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiZNAGE))); 
+      fProfileZNATPCNegCorr[0] -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiZNAGE))); 
+      fProfileZNCTPCPosCorr[0] -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiZNAGE))); 
+      fProfileZNATPCPosCorr[0] -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiZNAGE))); 
+      fProfileTPCPosNegCorr[0] -> Fill(centV0M, TMath::Cos(2*(PsiTPCNeg - PsiZNAGE))); 
+      fHist2DPhiPsiZNCVsCentPt[0]
+      fHist2DPhiPsiZNAVsCentPt[0]
+
     }
     
                                                         // continue until all the tracks are processed
